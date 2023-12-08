@@ -1,6 +1,8 @@
 package com.example.libraryreservation.auth;
 
 import com.example.libraryreservation.dto.LoginDto;
+import com.example.libraryreservation.jwt.JwtUtil;
+import com.example.libraryreservation.model.TokenModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.example.libraryreservation.model.UserModel;
@@ -27,12 +29,25 @@ public class AuthService {
             message.setMessage("Not Found User");
             return message;
         }
+
         UserModel user = userModel.get();
+
         if(!encoder.matches(loginDto.getPassword(), user.getPassword())) {
             message.setStatus(StatusEnum.UNAUTHORIZED);
             message.setMessage("Password is not matched");
             return message;
         }
 
+        String accessToken = JwtUtil.generateToken(user, (long) (1000*60*10));
+        String refreshToken = JwtUtil.generateToken(user,(long) (1000*60*60*3));
+
+        TokenModel tokenModel = new TokenModel(accessToken, refreshToken);
+        user.setTokenModel(tokenModel);
+        userRepository.save(user);
+
+        message.setMessage("Login Success");
+        message.setStatus(StatusEnum.OK);
+
+        return message;
     }
 }

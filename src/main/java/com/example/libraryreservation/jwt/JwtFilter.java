@@ -41,6 +41,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String phoneNumber = JwtUtil.getSubject(token);
 
+        if(phoneNumber.isEmpty()) {
+            logger.error("토큰에 Subject가 없습니다.");
+            filterChain.doFilter(request,response);
+            return ;
+        }
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(phoneNumber, null, List.of(new SimpleGrantedAuthority("USER")));
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
