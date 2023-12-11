@@ -1,5 +1,6 @@
 package com.example.libraryreservation.config;
 
+import com.example.libraryreservation.auth.AuthService;
 import com.example.libraryreservation.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final AuthService authService;
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -25,13 +27,14 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> {
                     requests.requestMatchers("/auth/login", "/auth/signup").permitAll();
+                    requests.requestMatchers(HttpMethod.PUT,"/auth/token").permitAll();
                     requests.requestMatchers(HttpMethod.POST, "/api").authenticated();
                 })
                 .sessionManagement(
                         sessionManagement ->
                                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(authService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package com.example.libraryreservation.jwt;
 
+import com.example.libraryreservation.auth.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
+    private final AuthService authService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -43,6 +45,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(phoneNumber.isEmpty()) {
             logger.error("토큰에 Subject가 없습니다.");
+            filterChain.doFilter(request,response);
+            return ;
+        }
+
+        if(authService.checkAccessToken(phoneNumber, token)) {
+            logger.error("토큰이 일치하지 않습니다.");
             filterChain.doFilter(request,response);
             return ;
         }

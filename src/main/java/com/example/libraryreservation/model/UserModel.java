@@ -30,6 +30,9 @@ public class UserModel {
     @Field("password")
     private String password;
 
+    @Field("name")
+    private String name;
+
     @Field("jwt")
     private TokenModel tokenModel;
 
@@ -41,8 +44,9 @@ public class UserModel {
     @LastModifiedDate
     private LocalDateTime updateAt = LocalDateTime.now();
 
-    public UserModel(String phoneNumber, String password) {
+    public UserModel(String phoneNumber, String password, String name) {
         this.phoneNumber = phoneNumber;
         this.password = password;
+        this.name = name;
     }
 }

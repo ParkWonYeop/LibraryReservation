@@ -12,16 +12,26 @@ import java.util.Date;
 public class JwtUtil {
     @Value("${jwt.secret_key}")
     public static SecretKey secretKey;
+    private static final Long accessExpiredMs = (long) (1000 * 60 * 30);
+    private static final Long refreshExpiredMs = (long) (1000 * 60 * 60 * 3);
 
-    public static String generateToken(UserModel userModel, Long expiredMs) {
-        return createToken(userModel.getPhoneNumber(), expiredMs);
+    public static String generateToken(UserModel userModel) {
+        return createAccessToken(userModel.getPhoneNumber());
     }
 
-    private static String createToken(String phoneNumber, Long expiredMs)  {
+    private static String createAccessToken(String phoneNumber)  {
         return Jwts.builder()
                 .subject(phoneNumber)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiredMs))
+                .expiration(new Date(System.currentTimeMillis() + accessExpiredMs))
+                .signWith(secretKey, Jwts.SIG.HS256)
+                .compact();
+    }
+
+    public static String createRefreshToken() {
+        return Jwts.builder()
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + refreshExpiredMs))
                 .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
     }

@@ -10,6 +10,10 @@ public enum StatusEnum {
     final int statusCode;
     final String code;
 
+    public Integer getStatusCode() {
+        return statusCode;
+    }
+
     StatusEnum(int statusCode, String code) {
         this.statusCode = statusCode;
         this.code = code;
