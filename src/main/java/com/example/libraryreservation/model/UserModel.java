@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @Document(collection="user")
 public class UserModel {
     @Id
-    @Field("user_id")
     private String userId;
 
     @Indexed(unique = true)
@@ -34,7 +33,7 @@ public class UserModel {
     private String name;
 
     @Field("jwt")
-    private TokenModel tokenModel;
+    private TokenModel tokenModel = new TokenModel("","");
 
     @Field("created_at")
     @CreatedDate
@@ -43,10 +42,4 @@ public class UserModel {
     @Field("updated_at")
     @LastModifiedDate
     private LocalDateTime updateAt = LocalDateTime.now();
-
-    public UserModel(String phoneNumber, String password, String name) {
-        this.phoneNumber = phoneNumber;
-        this.password = password;
-        this.name = name;
-    }
 }
