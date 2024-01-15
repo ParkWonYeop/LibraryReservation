@@ -1,6 +1,8 @@
 package com.example.libraryreservation.jwt;
 
 import com.example.libraryreservation.auth.AuthService;
+import com.example.libraryreservation.model.UserModel;
+import com.example.libraryreservation.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,12 +19,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     private final String secretKey;
-    private final AuthService authService;
+    private final UserRepository userRepository;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -32,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if(authorization == null || !authorization.startsWith("Bearer ")) {
             logger.error("authorization 이 없습니다.");
             filterChain.doFilter(request, response);
-            return;
+            return ;
         }
 
         String token = authorization.split(" ")[1];
@@ -51,13 +55,21 @@ public class JwtFilter extends OncePerRequestFilter {
             return ;
         }
 
-        if(!authService.findAccessToken(token,phoneNumber)) {
-            logger.error("유효한 토큰이 아닙니다.");
+        Optional<UserModel> userModel = userRepository.findUserModelByPhoneNumber(phoneNumber);
+
+        if(userModel.isEmpty()) {
+            logger.error("유저를 찾을 수 없습니다.");
             filterChain.doFilter(request,response);
             return ;
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(phoneNumber, null, List.of(new SimpleGrantedAuthority("USER")));
+        if(!Objects.equals(userModel.get().getTokenModel().getAccessToken(), token)) {
+            logger.error("토큰이 유효하지 않습니다.");
+            filterChain.doFilter(request,response);
+            return ;
+        }
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(phoneNumber, null, List.of(new SimpleGrantedAuthority("ROLE_"+userModel.get().getPermission().toString())));
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);

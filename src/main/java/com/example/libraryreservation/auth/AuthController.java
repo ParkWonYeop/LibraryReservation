@@ -50,4 +50,13 @@ public class AuthController {
 
         return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
     }
+
+    @GetMapping("/token")
+    public ResponseEntity<Message> checkToken() {
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
+        Message message = authService.checkToken();
+
+        return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
+    }
 }

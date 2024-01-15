@@ -2,7 +2,6 @@ package com.example.libraryreservation.room;
 
 import com.example.libraryreservation.enums.RoomEnum;
 import com.example.libraryreservation.model.RoomModel;
-import com.example.libraryreservation.model.SeatModel;
 import com.example.libraryreservation.repository.RoomRepository;
 import com.example.libraryreservation.response.Message;
 import com.example.libraryreservation.response.StatusEnum;
@@ -13,8 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static com.example.libraryreservation.utils.SecurityUtil.getCurrentMemberId;
 
 @Service
 @Slf4j

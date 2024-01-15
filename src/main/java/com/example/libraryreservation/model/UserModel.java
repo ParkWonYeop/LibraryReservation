@@ -1,5 +1,6 @@
 package com.example.libraryreservation.model;
 
+import com.example.libraryreservation.enums.PermissionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,9 @@ public class UserModel {
 
     @Field("jwt")
     private TokenModel tokenModel = new TokenModel("","");
+
+    @Field("Permission")
+    private PermissionEnum permission = PermissionEnum.USER;
 
     @Field("created_at")
     @CreatedDate

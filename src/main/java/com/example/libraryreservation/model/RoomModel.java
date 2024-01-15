@@ -23,7 +23,7 @@ public class RoomModel {
     private RoomEnum roomType;
 
     @Field("seat_list")
-    private List<SeatModel> seatList = new ArrayList<>();
+    private List<Integer> seatList = new ArrayList<>();
 
     public RoomModel(RoomEnum roomType) {
         this.roomType = roomType;

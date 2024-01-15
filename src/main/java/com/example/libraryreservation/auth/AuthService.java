@@ -138,4 +138,11 @@ public class AuthService {
         }
         return false;
     }
+
+    public Message checkToken() {
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("check");
+        return message;
+    }
 }
