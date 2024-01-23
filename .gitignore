@@ -38,3 +38,5 @@ out/
 
 application-auth.properties
 application-db.properties
+
+/logs

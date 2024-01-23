@@ -18,9 +18,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -31,7 +29,15 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        logger.info("authorization = " + authorization);
+        Enumeration<String> headerNames = request.getHeaderNames();
+        List<String> headers = new ArrayList<>();
+
+        while(headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            headers.add("\nHeaderName: {"+headerName+"}, Values: {"+request.getHeader(headerName)+"}");
+        }
+
+        logger.info("Request received. Method: {"+request.getMethod()+"}, URI: {"+request.getRequestURI()+"}, IP: {"+request.getRemoteAddr()+"},\nHeaders: {"+headers+"\n}");
 
         if(authorization == null || !authorization.startsWith("Bearer ")) {
             logger.error("authorization 이 없습니다.");
