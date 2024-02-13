@@ -1,5 +1,6 @@
 package com.example.libraryreservation.admin;
 
+import com.example.libraryreservation.annotation.QueryStringNaming;
 import com.example.libraryreservation.response.Message;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +20,20 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/reservation")
-    public ResponseEntity<Message> getReservationList(HttpServletRequest request) {
+    public ResponseEntity<Message> getReservationList() {
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
         Message message = adminService.getReservationList();
-        log.info("Response. IP: {"+request.getRemoteAddr()+"}, URI: {"+request.getRequestURI()+"}, status: {"+message.getStatus()+"}, message: {"+message.getMessage()+"}, dataType: {"+ message.getData().getClass().getName()+"}");
+        
         return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
     }
 
     @DeleteMapping("/reservation")
-    public ResponseEntity<Message> deleteReservation(@RequestParam(name="id") String reservationId, HttpServletRequest request) {
+    public ResponseEntity<Message> deleteReservation(@RequestParam(name="id") String reservationId) {
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
         Message message = adminService.deleteReservation(reservationId);
 
-        log.info("Response. IP: {"+request.getRemoteAddr()+"}, URI: {"+request.getRequestURI()+"}, status: {"+message.getStatus()+"}, message: {"+message.getMessage()+"}, dataType: {"+ message.getData().getClass().getName()+"}");
         return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
     }
 }

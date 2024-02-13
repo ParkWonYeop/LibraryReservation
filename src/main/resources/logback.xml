@@ -1,0 +1,40 @@
+<configuration>
+    <appender name="STASH" class="ch.qos.logback.core.ConsoleAppender">
+        <file>./application_log/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>application.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+        <layout class="net.logstash.logback.layout.LogstashLayout"> <!-- json 포맷 -->
+            <timestampPattern>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampPattern>
+        </layout>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <jsonGeneratorDecorator class="net.logstash.logback.decorate.CompositeJsonGeneratorDecorator">
+                <decorator class="net.logstash.logback.decorate.PrettyPrintingJsonGeneratorDecorator"/>
+            </jsonGeneratorDecorator>
+        </encoder>
+    </appender>
+    <root level="DEBUG">
+        <appender-ref ref="STASH" />
+    </root>
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./application_log/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./application_log/application.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+        <layout class="net.logstash.logback.layout.LogstashLayout"> <!-- json 포맷 -->
+            <timestampPattern>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampPattern>
+        </layout>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <jsonGeneratorDecorator class="net.logstash.logback.decorate.CompositeJsonGeneratorDecorator">
+                <decorator class="net.logstash.logback.decorate.PrettyPrintingJsonGeneratorDecorator"/>
+            </jsonGeneratorDecorator>
+        </encoder>
+    </appender>
+    <root level="info">
+        <appender-ref ref="file" />
+    </root>
+</configuration>

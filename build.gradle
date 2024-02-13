@@ -35,6 +35,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
+    implementation group: 'ch.qos.logback.contrib', name:'logback-jackson', version: '0.1.5'
+    implementation group:'net.logstash.logback', name:'logstash-logback-encoder', version:'6.1'
 }
 
 tasks.named('test') {

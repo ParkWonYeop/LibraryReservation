@@ -35,14 +35,12 @@ public class AuthService {
         if(userModel.isEmpty()) {
             message.setStatus(StatusEnum.UNAUTHORIZED);
             message.setMessage("Not Found User");
-            log.error("login : Not Found User");
             return message;
         }
 
         if(!encoder.matches(loginDto.getPassword(), userModel.get().getPassword())) {
             message.setStatus(StatusEnum.UNAUTHORIZED);
             message.setMessage("Password is not matched");
-            log.error("login : Password is not matched");
             return message;
         }
 
@@ -69,7 +67,6 @@ public class AuthService {
         if(userRepository.findUserModelByPhoneNumber(phoneNumber).isPresent()) {
             message.setStatus(StatusEnum.BAD_REQUEST);
             message.setMessage("PhoneNumber is already signed up");
-            log.error("signup : PhoneNumber is already signed up");
             return message;
         }
 
@@ -95,7 +92,6 @@ public class AuthService {
         if(JwtUtil.isExpired(refreshDto.getRefreshToken(), secretKey)) {
             message.setStatus(StatusEnum.UNAUTHORIZED);
             message.setMessage("RefreshToken is expired");
-            log.error("refreshToken : RefreshToken is expired");
             return message;
         }
 
@@ -115,18 +111,15 @@ public class AuthService {
                 message.setMessage("Refresh Success");
                 message.setData(accessToken);
 
-                log.info("refreshToken : Refresh Success");
                 return message;
             }
             message.setStatus(StatusEnum.UNAUTHORIZED);
             message.setMessage("RefreshToken is not correct");
-            log.error("refreshToken : RefreshToken is not correct");
             return message;
         }
 
         message.setStatus(StatusEnum.UNAUTHORIZED);
         message.setMessage("Not Found User");
-        log.error("refreshToken : Not Found User");
         return message;
     }
 

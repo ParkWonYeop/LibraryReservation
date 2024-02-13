@@ -1,5 +1,6 @@
 package com.example.libraryreservation.auth;
 
+import com.example.libraryreservation.annotation.QueryStringNaming;
 import com.example.libraryreservation.dto.LoginDto;
 import com.example.libraryreservation.dto.RefreshDto;
 import com.example.libraryreservation.dto.SignupDto;
@@ -26,44 +27,43 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<Message> login(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {
+    public ResponseEntity<Message> login(@Valid @RequestBody LoginDto loginDto) {
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
         Message message = authService.login(loginDto);
-
-        log.info("Response. IP: {"+request.getRemoteAddr()+"}, URI: {"+request.getRequestURI()+"}, status: {"+message.getStatus()+"}, message: {"+message.getMessage()+"}, dataType: {"+ message.getData().getClass().getName()+"}");
 
         return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Message> signup(@Valid @RequestBody SignupDto signupDto, HttpServletRequest request) {
+    public ResponseEntity<Message> signup(@Valid @RequestBody SignupDto signupDto) {
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
         Message message = authService.signup(signupDto);
-
-        log.info("Response. IP: {"+request.getRemoteAddr()+"}, URI: {"+request.getRequestURI()+"}, status: {"+message.getStatus()+"}, message: {"+message.getMessage()+"}, dataType: {"+ message.getData().getClass().getName()+"}");
 
         return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
     }
 
     @PutMapping("/token")
-    public ResponseEntity<Message> refreshToken(@Valid @RequestBody RefreshDto refreshDto, HttpServletRequest request) {
+    public ResponseEntity<Message> refreshToken(@Valid @RequestBody RefreshDto refreshDto) {
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
         Message message = authService.refreshToken(refreshDto);
-        log.info("Response. IP: {"+request.getRemoteAddr()+"}, URI: {"+request.getRequestURI()+"}, status: {"+message.getStatus()+"}, message: {"+message.getMessage()+"}, dataType: {"+ message.getData().getClass().getName()+"}");
 
         return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
     }
 
     @GetMapping("/token")
-    public ResponseEntity<Message> checkToken(HttpServletRequest request) {
+    public ResponseEntity<Message> checkToken() {
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
         Message message = authService.checkToken();
 
-        log.info("Response. IP: {"+request.getRemoteAddr()+"}, URI: {"+request.getRequestURI()+"}, status: {"+message.getStatus()+"}, message: {"+message.getMessage()+"}, dataType: {"+ message.getData().getClass().getName()+"}");
         return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
+    }
+
+    @GetMapping("/test")
+    public String test(@RequestParam(name = "helloWorld") String hello) {
+        return hello;
     }
 }

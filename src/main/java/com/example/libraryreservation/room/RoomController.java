@@ -23,22 +23,21 @@ public class RoomController {
     private final RoomService roomService;
 
     @GetMapping("/list")
-    public ResponseEntity<Message> getRoomList(HttpServletRequest request) {
+    public ResponseEntity<Message> getRoomList() {
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
         Message message = roomService.getRoomList();
 
-        log.info("Response. IP: {"+request.getRemoteAddr()+"}, URI: {"+request.getRequestURI()+"}, status: {"+message.getStatus()+"}, message: {"+message.getMessage()+"}, dataType: {"+ message.getData().getClass().getName()+"}");
         return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
     }
 
     @GetMapping()
-    public ResponseEntity<Message> getRoom(@RequestParam RoomEnum roomType, HttpServletRequest request) {
+    public ResponseEntity<Message> getRoom(@RequestParam(name = "roomType") RoomEnum roomType) {
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
         Message message = roomService.getRoom(roomType);
 
-        log.info("Response. IP: {"+request.getRemoteAddr()+"}, URI: {"+request.getRequestURI()+"}, status: {"+message.getStatus()+"}, message: {"+message.getMessage()+"}, dataType: {"+ message.getData().getClass().getName()+"}");
+        
         return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
     }
 }
