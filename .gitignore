@@ -39,4 +39,4 @@ out/
 application-auth.properties
 application-db.properties
 
-!**/application_log
+application_log
