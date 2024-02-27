@@ -1,18 +1,15 @@
 package com.example.libraryreservation.reservation;
 
-import com.example.libraryreservation.annotation.QueryStringNaming;
-import com.example.libraryreservation.dto.ReservationDto;
-import com.example.libraryreservation.response.Message;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.libraryreservation.common.dto.ReservationDto;
+import com.example.libraryreservation.common.model.ReservationModel;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,30 +18,22 @@ import java.nio.charset.StandardCharsets;
 public class ReservationController {
     private final ReservationService reservationService;
 
+    @Transactional
     @PostMapping()
-    public ResponseEntity<Message> reservationSeat(@Valid @RequestBody ReservationDto reservationDto) {
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-        Message message = reservationService.reservationSeat(reservationDto);
-
-        return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
+    @ResponseStatus(HttpStatus.CREATED)
+    public String reservationSeat(@Valid @RequestBody ReservationDto reservationDto) {
+        return reservationService.reservationSeat(reservationDto);
     }
 
+    @Transactional(readOnly = true)
     @GetMapping()
-    public ResponseEntity<Message> getReservationList() {
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-        Message message = reservationService.getReservationList();
-
-        return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
+    public List<ReservationModel> getReservationList() {
+        return reservationService.getReservationList();
     }
 
+    @Transactional
     @DeleteMapping()
-    public ResponseEntity<Message> deleteReservation(@RequestParam(name = "id") String id) {
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-        Message message = reservationService.deleteReservation(id);
-
-        return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
+    public String deleteReservation(@RequestParam(name = "id") long id) {
+        return reservationService.deleteReservation(id);
     }
 }

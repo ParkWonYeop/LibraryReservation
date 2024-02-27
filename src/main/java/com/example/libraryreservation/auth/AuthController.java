@@ -1,23 +1,15 @@
 package com.example.libraryreservation.auth;
 
-import com.example.libraryreservation.annotation.QueryStringNaming;
-import com.example.libraryreservation.dto.LoginDto;
-import com.example.libraryreservation.dto.RefreshDto;
-import com.example.libraryreservation.dto.SignupDto;
-import com.example.libraryreservation.response.Message;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.libraryreservation.auth.dto.LoginDto;
+import com.example.libraryreservation.auth.dto.RefreshDto;
+import com.example.libraryreservation.auth.dto.SignupDto;
+import com.example.libraryreservation.common.model.TokenModel;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,44 +18,28 @@ import java.nio.charset.StandardCharsets;
 public class AuthController {
     private final AuthService authService;
 
+    @Transactional
     @PostMapping("/login")
-    public ResponseEntity<Message> login(@Valid @RequestBody LoginDto loginDto) {
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-        Message message = authService.login(loginDto);
-
-        return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
+    public TokenModel login(@Valid @RequestBody LoginDto loginDto) {
+        return authService.login(loginDto);
     }
 
+    @Transactional
     @PostMapping("/signup")
-    public ResponseEntity<Message> signup(@Valid @RequestBody SignupDto signupDto) {
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-        Message message = authService.signup(signupDto);
-
-        return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
+    @ResponseStatus(HttpStatus.CREATED)
+    public String signup(@Valid @RequestBody SignupDto signupDto) {
+        return authService.signup(signupDto);
     }
 
+    @Transactional
     @PutMapping("/token")
-    public ResponseEntity<Message> refreshToken(@Valid @RequestBody RefreshDto refreshDto) {
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-        Message message = authService.refreshToken(refreshDto);
-
-        return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
+    public String refreshToken(@Valid @RequestBody RefreshDto refreshDto) {
+        return authService.refreshToken(refreshDto);
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/token")
-    public ResponseEntity<Message> checkToken() {
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-        Message message = authService.checkToken();
-
-        return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
-    }
-
-    @GetMapping("/test")
-    public String test(@RequestParam(name = "helloWorld") String hello) {
-        return hello;
+    public String checkToken() {
+        return authService.checkToken();
     }
 }

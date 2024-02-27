@@ -1,16 +1,12 @@
 package com.example.libraryreservation.admin;
 
-import com.example.libraryreservation.annotation.QueryStringNaming;
-import com.example.libraryreservation.response.Message;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.libraryreservation.common.model.ReservationModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,21 +15,15 @@ import java.nio.charset.StandardCharsets;
 public class AdminController {
     private final AdminService adminService;
 
+    @Transactional(readOnly = true)
     @GetMapping("/reservation")
-    public ResponseEntity<Message> getReservationList() {
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-        Message message = adminService.getReservationList();
-        
-        return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
+    public List<ReservationModel> getReservationList() {
+        return adminService.getReservationList();
     }
 
+    @Transactional
     @DeleteMapping("/reservation")
-    public ResponseEntity<Message> deleteReservation(@RequestParam(name="id") String reservationId) {
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-        Message message = adminService.deleteReservation(reservationId);
-
-        return new ResponseEntity<>(message, headers, message.getStatus().getStatusCode());
+    public String deleteReservation(@RequestParam(name="id") long reservationId) {
+        return adminService.deleteReservation(reservationId);
     }
 }

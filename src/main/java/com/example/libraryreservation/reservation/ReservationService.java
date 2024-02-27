@@ -1,25 +1,22 @@
 package com.example.libraryreservation.reservation;
 
-import com.example.libraryreservation.dto.ReservationDto;
-import com.example.libraryreservation.model.ReservationModel;
-import com.example.libraryreservation.model.RoomModel;
-import com.example.libraryreservation.model.UserModel;
-import com.example.libraryreservation.repository.ReservationRepository;
-import com.example.libraryreservation.repository.RoomRepository;
-import com.example.libraryreservation.repository.UserRepository;
-import com.example.libraryreservation.response.Message;
-import com.example.libraryreservation.response.StatusEnum;
+import com.example.libraryreservation.common.dto.ReservationDto;
+import com.example.libraryreservation.common.model.ReservationModel;
+import com.example.libraryreservation.common.model.RoomModel;
+import com.example.libraryreservation.common.model.UserModel;
+import com.example.libraryreservation.common.repository.ReservationRepository;
+import com.example.libraryreservation.common.repository.RoomRepository;
+import com.example.libraryreservation.common.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.example.libraryreservation.utils.SecurityUtil.getCurrentMemberId;
+import static com.example.libraryreservation.common.utils.SecurityUtil.getCurrentMemberId;
 
 @Service
 @Slf4j
@@ -29,121 +26,89 @@ public class ReservationService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
-    public Message reservationSeat(ReservationDto reservationDto) {
-        Message message = new Message();
+    public String reservationSeat(ReservationDto reservationDto) {
         LocalDateTime startTime = reservationDto.getStartTime();
         LocalDateTime endTime = reservationDto.getEndTime();
-        log.info(String.valueOf(startTime));
 
-        Optional<RoomModel> roomModelOptional = roomRepository.findRoomModelByRoomType(reservationDto.getRoomType());
-        if (roomModelOptional.isEmpty()) {
-            message.setStatus(StatusEnum.BAD_REQUEST);
-            message.setMessage("Room not found");
-            return message;
+        List<RoomModel> roomModelList = roomRepository.findRoomModelByRoomType(reservationDto.getRoomType());
+        if (roomModelList.isEmpty()) {
+            throw new RuntimeException("Room not found");
         }
-        if(!findSeatNumber(roomModelOptional.get().getSeatList(), reservationDto.getSeatNumber())) {
-            message.setStatus(StatusEnum.BAD_REQUEST);
-            message.setMessage("SeatNumber not found");
-            return message;
+
+        RoomModel roomModel = findSeatNumber(roomModelList, reservationDto.getSeatNumber());
+
+        if(roomModel==null) {
+            throw new RuntimeException("SeatNumber not found");
         }
 
         Optional<UserModel> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
+
         if(userModelOptional.isEmpty()) {
-            message.setStatus(StatusEnum.BAD_REQUEST);
-            message.setMessage("User not found");
-            return message;
+            throw new RuntimeException("User not found");
         }
 
         UserModel userModel = userModelOptional.get();
-        RoomModel roomModel = roomModelOptional.get();
 
         List<ReservationModel> reservationList = reservationRepository.findReservationModelsByUserModel(userModel);
 
         if(!reservationList.isEmpty()) {
-            message.setStatus(StatusEnum.BAD_REQUEST);
-            message.setMessage("Already reservation user");
-            return message;
+            throw new RuntimeException("Already reservation user");
         }
 
-        Optional<ReservationModel> checkReservation = reservationRepository.findReservationModelByRoomModelAndSeatNumberAndStartTime(roomModel, reservationDto.getSeatNumber(), reservationDto.getStartTime());
+        Optional<ReservationModel> checkReservation = reservationRepository.findReservationModelBySeatNumberAndStartTime(
+                roomModel, reservationDto.getStartTime()
+        );
 
         if(checkReservation.isPresent()) {
-            message.setStatus(StatusEnum.BAD_REQUEST);
-            message.setMessage("Already reservation seat");
-            return message;
+            throw new RuntimeException("Already reservation seat");
         }
 
         ReservationModel reservationModel = new ReservationModel();
-        reservationModel.setRoomModel(roomModel);
-        reservationModel.setSeatNumber(reservationDto.getSeatNumber());
+        reservationModel.setSeatNumber(roomModel);
         reservationModel.setUserModel(userModel);
         reservationModel.setStartTime(startTime);
         reservationModel.setEndTime(endTime);
 
         reservationRepository.save(reservationModel);
 
-        message.setStatus(StatusEnum.OK);
-        message.setMessage("Success");
-
-        return message;
+        return "success";
     }
 
-    public Message getReservationList() {
-        Message message = new Message();
+    public List<ReservationModel> getReservationList() {
         Optional<UserModel> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
         if(userModelOptional.isEmpty()) {
-            message.setStatus(StatusEnum.BAD_REQUEST);
-            message.setMessage("User not found");
-            return message;
+            throw new RuntimeException("User not found");
         }
-
-        UserModel userModel = userModelOptional.get();
-
-        List<ReservationModel> reservationModelList = reservationRepository.findReservationModelsByUserModel(userModel);
-
-        message.setStatus(StatusEnum.OK);
-        message.setMessage("Success");
-        message.setData(reservationModelList);
-
-        return message;
+        return reservationRepository.findReservationModelsByUserModel(userModelOptional.get());
     }
 
-    public Message deleteReservation(String reservationId) {
-        Message message = new Message();
+    public String deleteReservation(long reservationId) {
         Optional<ReservationModel> reservationModel = reservationRepository.findReservationModelByReservationId(reservationId);
         if(reservationModel.isEmpty()) {
-            message.setStatus(StatusEnum.BAD_REQUEST);
-            message.setMessage("Reservation is not found");
-            return message;
+            throw new RuntimeException("Reservation is not found");
         }
 
         Optional<UserModel> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
 
         if(userModelOptional.isEmpty()) {
-            message.setStatus(StatusEnum.BAD_REQUEST);
-            message.setMessage("User is not found");
-            return message;
+            throw new RuntimeException("User is not found");
         }
 
         if(!Objects.equals(reservationModel.get().getUserModel().getPhoneNumber(), userModelOptional.get().getPhoneNumber())) {
-            message.setStatus(StatusEnum.BAD_REQUEST);
-            message.setMessage("User is not correct");
-            return message;
+            throw new RuntimeException("User is not correct");
         }
 
         reservationRepository.delete(reservationModel.get());
 
-        message.setStatus(StatusEnum.OK);
-        message.setMessage("Success");
-        return message;
+        return "success";
     }
 
-    private boolean findSeatNumber(List<Integer> seatList, Integer seatNumber) {
-        for(Integer i : seatList) {
-            if(Objects.equals(i, seatNumber)) {
-                return true;
+    private RoomModel findSeatNumber(List<RoomModel> seatList, Integer seatNumber) {
+        for(RoomModel i : seatList) {
+            if(Objects.equals(i.getSeatNumber(), seatNumber)) {
+                return i;
             }
         }
-        return false;
+        return null;
     }
 }
