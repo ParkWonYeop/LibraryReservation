@@ -1,4 +1,4 @@
-package com.example.libraryreservation.common.controller;
+package com.example.libraryreservation.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,7 @@ import java.nio.file.AccessDeniedException;
 
 @ControllerAdvice
 @Slf4j
-public class ExceptionController {
+public class ExceptionControllerAdvice {
     @ExceptionHandler({
         RuntimeException.class
     })
