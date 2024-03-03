@@ -16,19 +16,19 @@ import java.time.LocalDateTime;
 @Entity(name = "user")
 public class UserModel {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
 
-    @Column(name="phone_number",nullable = false)
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name="password",nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name="name",nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name="permission",nullable = false)
+    @Column(name = "permission", nullable = false)
     private PermissionEnum permission = PermissionEnum.USER;
 
     @CreationTimestamp

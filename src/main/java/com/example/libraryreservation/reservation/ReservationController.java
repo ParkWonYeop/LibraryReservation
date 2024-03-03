@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,20 +17,17 @@ import java.util.List;
 public class ReservationController {
     private final ReservationService reservationService;
 
-    @Transactional
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public String reservationSeat(@Valid @RequestBody ReservationDto reservationDto) {
         return reservationService.reservationSeat(reservationDto);
     }
 
-    @Transactional(readOnly = true)
     @GetMapping()
     public List<ReservationModel> getReservationList() {
         return reservationService.getReservationList();
     }
 
-    @Transactional
     @DeleteMapping()
     public String deleteReservation(@RequestParam(name = "id") long id) {
         return reservationService.deleteReservation(id);

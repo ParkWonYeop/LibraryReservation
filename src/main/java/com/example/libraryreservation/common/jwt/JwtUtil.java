@@ -24,7 +24,7 @@ public class JwtUtil {
         return createAccessToken(userModel.getPhoneNumber(), secretKey);
     }
 
-    private static String createAccessToken(String phoneNumber, String secretKey)  {
+    private static String createAccessToken(String phoneNumber, String secretKey) {
         return Jwts.builder()
                 .subject(phoneNumber)
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -42,7 +42,7 @@ public class JwtUtil {
     }
 
     public static boolean isExpired(String token, String secretKey) {
-        try{
+        try {
             return Jwts
                     .parser()
                     .verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
@@ -51,7 +51,7 @@ public class JwtUtil {
                     .getPayload()
                     .getExpiration()
                     .before(new Date());
-        }catch (SignatureException e) {
+        } catch (SignatureException e) {
             throw new JwtException(JwtErrorEnum.WRONG_TYPE_TOKEN.getMsg());
         } catch (MalformedJwtException e) {
             throw new JwtException(JwtErrorEnum.UNSUPPORTED_TOKEN.getMsg());
@@ -63,12 +63,12 @@ public class JwtUtil {
     }
 
     public static String getSubject(String token, String secretKey) {
-            return Jwts.parser()
-                    .verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload()
-                    .getSubject();
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
 
     }
 }

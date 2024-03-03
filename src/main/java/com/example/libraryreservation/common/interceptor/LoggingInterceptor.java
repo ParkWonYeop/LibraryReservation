@@ -25,16 +25,16 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
     public static void requestLogging(HttpServletRequest request) {
         Enumeration<String> headerNames = request.getHeaderNames();
-        Map<String,String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>();
 
-        while(headerNames.hasMoreElements()) {
+        while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
             headers.put(headerName, request.getHeader(headerName));
         }
 
         MDC.put("IP", request.getRemoteAddr());
         MDC.put("Method", request.getMethod());
-        MDC.put("URI",request.getRequestURI());
+        MDC.put("URI", request.getRequestURI());
         MDC.put("Headers", headers.toString());
 
         log.info("Request");

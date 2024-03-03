@@ -1,5 +1,10 @@
 package com.example.libraryreservation.common.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum JwtErrorEnum {
     UNKNOWN_ERROR("UNKNOWN_ERROR", 400),
     WRONG_TYPE_TOKEN("WRONG_TYPE_TOKEN", 400),
@@ -10,17 +15,4 @@ public enum JwtErrorEnum {
 
     final String msg;
     final Integer code;
-
-    JwtErrorEnum(String msg, Integer code) {
-        this.msg = msg;
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public Integer getCode() {
-        return code;
-    }
 }

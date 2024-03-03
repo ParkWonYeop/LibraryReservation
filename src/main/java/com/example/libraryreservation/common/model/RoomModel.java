@@ -2,7 +2,10 @@ package com.example.libraryreservation.common.model;
 
 import com.example.libraryreservation.common.enums.RoomEnum;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Data
@@ -11,12 +14,12 @@ import lombok.*;
 @Entity(name = "room")
 public class RoomModel {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long roomId;
 
-    @Column(name="room_type",nullable = false)
+    @Column(name = "room_type", nullable = false)
     private RoomEnum roomType;
 
-    @Column(name="seat_number",nullable = false)
+    @Column(name = "seat_number", nullable = false)
     private Integer seatNumber;
 }

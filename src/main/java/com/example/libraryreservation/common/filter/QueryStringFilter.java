@@ -9,10 +9,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-public class QueryStringFilter extends OncePerRequestFilter{
+public class QueryStringFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        filterChain.doFilter(new RequestWrapper(request),response);
+        filterChain.doFilter(new RequestWrapper(request), response);
     }
 
     private static class RequestWrapper extends HttpServletRequestWrapper {
@@ -24,7 +24,7 @@ public class QueryStringFilter extends OncePerRequestFilter{
         public String[] getParameterValues(String parameter) {
             String[] values = super.getParameterValues(parameter);
 
-            if(values == null) {
+            if (values == null) {
                 return super.getParameterValues(toSnakeCase(parameter));
             }
 
@@ -35,7 +35,7 @@ public class QueryStringFilter extends OncePerRequestFilter{
         public String getParameter(String parameter) {
             String value = super.getParameter(parameter);
 
-            if(value==null) {
+            if (value == null) {
                 return super.getParameter(toSnakeCase(parameter));
             }
 

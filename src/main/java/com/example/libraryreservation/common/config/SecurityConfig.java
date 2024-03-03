@@ -1,6 +1,6 @@
 package com.example.libraryreservation.common.config;
 
-/*import com.example.libraryreservation.common.enums.PermissionEnum;
+import com.example.libraryreservation.common.enums.PermissionEnum;
 import com.example.libraryreservation.common.filter.QueryStringFilter;
 import com.example.libraryreservation.common.jwt.JwtErrorFilter;
 import com.example.libraryreservation.common.jwt.JwtFilter;
@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> {
-                    requests.requestMatchers("/auth/login", "/auth/signup","/auth/test").permitAll();
+                    requests.requestMatchers("/auth/login", "/auth/signup", "/auth/test").permitAll();
                     requests.requestMatchers(HttpMethod.PUT, "/auth/token").permitAll();
                     requests.requestMatchers(HttpMethod.GET, "/auth/token").authenticated();
                     requests.requestMatchers("/room/**", "/reservation/**").authenticated();
@@ -54,4 +54,4 @@ public class SecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-}*/
+}

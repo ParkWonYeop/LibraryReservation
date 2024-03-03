@@ -22,8 +22,8 @@ public class ScheduledTasks {
 
         LocalDateTime now = LocalDateTime.now();
 
-        for(ReservationModel reservationModel : reservationModelList) {
-            if(now.isAfter(reservationModel.getEndTime())) {
+        for (ReservationModel reservationModel : reservationModelList) {
+            if (now.isAfter(reservationModel.getEndTime())) {
                 reservationRepository.delete(reservationModel);
             }
         }

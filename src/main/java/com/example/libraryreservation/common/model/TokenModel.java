@@ -11,11 +11,11 @@ import lombok.*;
 @Entity(name = "user_token")
 public class TokenModel {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long tokenId;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserModel userModel;
 
     @Column(name = "access_token")

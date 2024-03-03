@@ -23,38 +23,33 @@ public class JwtErrorFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
-        try{
+        try {
             requestLogging(request);
-            filterChain.doFilter(request,response);
+            filterChain.doFilter(request, response);
             MDC.clear();
         } catch (JwtException | ServletException e) {
             String message = e.getMessage();
 
             log.error(message);
 
-            if(JwtErrorEnum.UNKNOWN_ERROR.getMsg().equals(message)) {
+            if (JwtErrorEnum.UNKNOWN_ERROR.getMsg().equals(message)) {
                 setResponse(request, response, JwtErrorEnum.UNKNOWN_ERROR);
-            }
-            else if(JwtErrorEnum.WRONG_TYPE_TOKEN.getMsg().equals(message)) {
+            } else if (JwtErrorEnum.WRONG_TYPE_TOKEN.getMsg().equals(message)) {
                 setResponse(request, response, JwtErrorEnum.WRONG_TYPE_TOKEN);
-            }
-            else if(JwtErrorEnum.EXPIRED_TOKEN.getMsg().equals(message)) {
+            } else if (JwtErrorEnum.EXPIRED_TOKEN.getMsg().equals(message)) {
                 setResponse(request, response, JwtErrorEnum.EXPIRED_TOKEN);
-            }
-            else if(JwtErrorEnum.UNSUPPORTED_TOKEN.getMsg().equals(message)) {
+            } else if (JwtErrorEnum.UNSUPPORTED_TOKEN.getMsg().equals(message)) {
                 setResponse(request, response, JwtErrorEnum.UNSUPPORTED_TOKEN);
-            }
-            else if(JwtErrorEnum.NULL_PARAM.getMsg().equals(message)) {
+            } else if (JwtErrorEnum.NULL_PARAM.getMsg().equals(message)) {
                 setResponse(request, response, JwtErrorEnum.NULL_PARAM);
-            }
-            else {
+            } else {
                 setResponse(request, response, JwtErrorEnum.ACCESS_DENIED);
             }
             MDC.clear();
         }
     }
 
-    private void setResponse(HttpServletRequest request,HttpServletResponse response, JwtErrorEnum errorMessage) throws RuntimeException, IOException {
+    private void setResponse(HttpServletRequest request, HttpServletResponse response, JwtErrorEnum errorMessage) throws RuntimeException, IOException {
         log.info("Response. Method: {}, URI: {}, Status: {}, Message: {}", request.getMethod(), request.getRequestURI(), String.valueOf(errorMessage.getCode()), errorMessage.getMsg());
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(errorMessage.getCode());

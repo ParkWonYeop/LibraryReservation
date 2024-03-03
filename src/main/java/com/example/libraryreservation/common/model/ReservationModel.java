@@ -12,20 +12,20 @@ import java.time.LocalDateTime;
 @Entity(name = "reservation")
 public class ReservationModel {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reservationId;
 
     @ManyToOne
-    @JoinColumn(name="seat_id", nullable = false)
+    @JoinColumn(name = "seat_id", nullable = false)
     private RoomModel seatNumber;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserModel userModel;
 
-    @Column(name="start_time", nullable = false)
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(name="end_time", nullable = false)
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 }
