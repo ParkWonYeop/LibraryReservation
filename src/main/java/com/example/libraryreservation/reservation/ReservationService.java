@@ -111,9 +111,9 @@ public class ReservationService {
     }
 
     private RoomModel findSeatNumber(List<RoomModel> seatList, Integer seatNumber) {
-        for (RoomModel i : seatList) {
-            if (Objects.equals(i.getSeatNumber(), seatNumber)) {
-                return i;
+        for (RoomModel roomModel : seatList) {
+            if (Objects.equals(roomModel.getSeatNumber(), seatNumber)) {
+                return roomModel;
             }
         }
         return null;

@@ -21,3 +21,12 @@
     - exception 패키지에 ErrorResponse 클래스를 하나만들어서
     - ErrorResponse {code:"", message:"""} << 이걸 ResponseEntity에 담아서 에러 응답.
 4. 테스트코드에 parameter, property가 null, empty, blank, 특수문자 등등에 각 케이스별로 테스트 코드 작성 필요
+
+## 2024-03-12
+1. return "success"; 같이 불필요한 return 로직 제거
+2. 가급적 약어 사용하지 말것.
+3. resource/data.sql 만들어서 테스트에 필요한 데이터 세팅되도록 수정
+4. jsonPath("$.~~")를 사용해서 응답값 확인하는 로직을 테스트 코드에 추가
+5. 테스트 코드에서 MockMvcResultMatchers. 참조하는 로직 제거
+6. java record 공부 후 적용
+7. 이력서 써서 제출

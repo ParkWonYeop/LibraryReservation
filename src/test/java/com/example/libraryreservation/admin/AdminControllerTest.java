@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
@@ -84,7 +86,8 @@ public class AdminControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/admin/reservation")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.reservation").value("ok"))
                 .andDo(print());
     }
 
@@ -96,7 +99,7 @@ public class AdminControllerTest {
                         .delete("/admin/reservation")
                         .param("id", String.valueOf(reservationModel.get(0).getReservationId()))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
@@ -107,7 +110,7 @@ public class AdminControllerTest {
                         .delete("/admin/reservation")
                         .param("id", "0")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
@@ -118,7 +121,7 @@ public class AdminControllerTest {
                         .delete("/admin/reservation")
                         .param("id", " ")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
@@ -129,7 +132,7 @@ public class AdminControllerTest {
                         .delete("/admin/reservation")
                         .param("id", "*")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 }
