@@ -19,8 +19,8 @@ public class ReservationController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public String reservationSeat(@Valid @RequestBody ReservationDto reservationDto) {
-        return reservationService.reservationSeat(reservationDto);
+    public void reservationSeat(@Valid @RequestBody ReservationDto reservationDto) {
+        reservationService.reservationSeat(reservationDto);
     }
 
     @GetMapping()
@@ -29,7 +29,7 @@ public class ReservationController {
     }
 
     @DeleteMapping()
-    public String deleteReservation(@RequestParam(name = "id") long id) {
-        return reservationService.deleteReservation(id);
+    public void deleteReservation(@RequestParam(name = "id") long id) {
+        reservationService.deleteReservation(id);
     }
 }

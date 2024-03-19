@@ -4,7 +4,6 @@ import com.example.libraryreservation.auth.AuthController;
 import com.example.libraryreservation.auth.dto.LoginDto;
 import com.example.libraryreservation.common.model.ReservationModel;
 import com.example.libraryreservation.common.model.TokenModel;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,20 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Transactional
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -38,44 +36,20 @@ public class AdminControllerTest {
     private AdminController adminController;
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     protected MockHttpSession session;
 
     @Before
     public void setUp() throws Exception {
         this.session = new MockHttpSession();
-        LoginDto loginDto = new LoginDto();
-        loginDto.setPhoneNumber("01099716733");
-        loginDto.setPassword("1234567");
+        LoginDto loginDto = new LoginDto("01099716733","1234567");
         TokenModel tokenModel = authController.login(loginDto);
 
         this.session.setAttribute("accessToken", tokenModel.getAccessToken());
-
-        Map<String, String> body = new HashMap<>();
-
-        LocalDateTime startTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
-
-        body.put("roomType", "STUDYING");
-        body.put("seatNumber", "1");
-        body.put("startTime", startTime.toString());
-        body.put("endTime", startTime.plusHours(1).toString());
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/reservation")
-                        .content(objectMapper.writeValueAsString(body))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
-                .andDo(print());
     }
 
     @After
     public void clean() {
         session.clearAttributes();
-        List<ReservationModel> reservationModelList = adminController.getReservationList();
-        for (ReservationModel reservationModel : reservationModelList) {
-            adminController.deleteReservation(reservationModel.getReservationId());
-        }
     }
 
     @DisplayName("예약 리스트")
@@ -84,7 +58,13 @@ public class AdminControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/admin/reservation")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].['reservationId']").value(1))
+                .andExpect(jsonPath("$[0].['seatNumber'].['roomId']").value(1))
+                .andExpect(jsonPath("$[0].['seatNumber'].['roomType']").value("DIGITAL"))
+                .andExpect(jsonPath("$[0].['seatNumber'].['seatNumber']").value(1))
+                .andExpect(jsonPath("$[0].['startTime']").value("2024-06-04T00:00:00"))
+                .andExpect(jsonPath("$[0].['endTime']").value("2024-06-04T01:00:00"))
                 .andDo(print());
     }
 
@@ -94,9 +74,9 @@ public class AdminControllerTest {
         List<ReservationModel> reservationModel = adminController.getReservationList();
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/admin/reservation")
-                        .param("id", String.valueOf(reservationModel.get(0).getReservationId()))
+                        .param("id", "1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
@@ -107,7 +87,8 @@ public class AdminControllerTest {
                         .delete("/admin/reservation")
                         .param("id", "0")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").value("예약을 찾을 수 없습니다."))
                 .andDo(print());
     }
 
@@ -118,7 +99,8 @@ public class AdminControllerTest {
                         .delete("/admin/reservation")
                         .param("id", " ")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").value("Failed to convert value of type 'java.lang.String' to required type 'long'; For input string: \"\""))
                 .andDo(print());
     }
 
@@ -129,7 +111,8 @@ public class AdminControllerTest {
                         .delete("/admin/reservation")
                         .param("id", "*")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$").value("Failed to convert value of type 'java.lang.String' to required type 'long'; For input string: \"*\""))
                 .andDo(print());
     }
 }

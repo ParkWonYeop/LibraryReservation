@@ -1,10 +1,10 @@
 package com.example.libraryreservation.auth;
 
-import com.example.libraryreservation.auth.constant.AuthResponse;
 import com.example.libraryreservation.auth.dto.LoginDto;
 import com.example.libraryreservation.auth.dto.RefreshDto;
 import com.example.libraryreservation.auth.dto.SignupDto;
 import com.example.libraryreservation.common.controller.LibraryReservationException;
+import com.example.libraryreservation.common.controller.constant.CommunalResponse;
 import com.example.libraryreservation.common.jwt.JwtUtil;
 import com.example.libraryreservation.common.model.TokenModel;
 import com.example.libraryreservation.common.model.UserModel;
@@ -33,12 +33,12 @@ public class AuthService {
 
     @Transactional
     public TokenModel login(LoginDto loginDto) {
-        Optional<UserModel> userModel = userRepository.findUserModelByPhoneNumber(loginDto.getPhoneNumber());
+        Optional<UserModel> userModel = userRepository.findUserModelByPhoneNumber(loginDto.phoneNumber());
         if (userModel.isEmpty()) {
             throw new AccessDeniedException("전화번호가 일치하지 않습니다.");
         }
 
-        if (!encoder.matches(loginDto.getPassword(), userModel.get().getPassword())) {
+        if (!encoder.matches(loginDto.password(), userModel.get().getPassword())) {
             throw new AccessDeniedException("비밀번호가 일치하지 않습니다.");
         }
 
@@ -59,33 +59,31 @@ public class AuthService {
     }
 
     @Transactional
-    public String signup(SignupDto signupDto) {
-        String phoneNumber = signupDto.getPhoneNumber();
+    public void signup(SignupDto signupDto) {
+        String phoneNumber = signupDto.phoneNumber();
         userRepository.findUserModelByPhoneNumber(phoneNumber);
 
         if (userRepository.findUserModelByPhoneNumber(phoneNumber).isPresent()) {
-            throw new LibraryReservationException(AuthResponse.ALREADY_SIGNUP_PHONENUMBER);
+            throw new LibraryReservationException(CommunalResponse.ALREADY_SIGNUP_PHONENUMBER);
         }
 
-        String password_encode = encoder.encode(signupDto.getPassword());
-        String name = signupDto.getName();
+        String password_encode = encoder.encode(signupDto.password());
+        String name = signupDto.name();
 
         UserModel userModel = new UserModel();
         userModel.setPhoneNumber(phoneNumber);
         userModel.setPassword(password_encode);
         userModel.setName(name);
         userRepository.save(userModel);
-
-        return "success";
     }
 
     @Transactional
     public String refreshToken(RefreshDto refreshDto) {
-        if (JwtUtil.isExpired(refreshDto.getRefreshToken(), secretKey)) {
+        if (JwtUtil.isExpired(refreshDto.refreshToken(), secretKey)) {
             throw new AccessDeniedException("refreshToken is expired");
         }
 
-        String phoneNumber = refreshDto.getPhoneNumber();
+        String phoneNumber = refreshDto.phoneNumber();
         Optional<UserModel> optionalUser = userRepository.findUserModelByPhoneNumber(phoneNumber);
 
         if (optionalUser.isPresent()) {
@@ -95,7 +93,7 @@ public class AuthService {
                 throw new AccessDeniedException("token not found");
             }
 
-            if (Objects.equals(tokenModel.get().getRefreshToken(), refreshDto.getRefreshToken())) {
+            if (Objects.equals(tokenModel.get().getRefreshToken(), refreshDto.refreshToken())) {
                 String accessToken = JwtUtil.generateToken(userModel, secretKey);
                 tokenModel.get().setAccessToken(accessToken);
                 tokenRepository.save(tokenModel.get());
@@ -105,11 +103,5 @@ public class AuthService {
             throw new AccessDeniedException("refreshToken is not correct");
         }
         throw new AccessDeniedException("user not found");
-    }
-
-
-    @Transactional(readOnly = true)
-    public String checkToken() {
-        return "success";
     }
 }

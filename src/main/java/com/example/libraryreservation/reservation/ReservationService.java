@@ -9,7 +9,6 @@ import com.example.libraryreservation.common.model.UserModel;
 import com.example.libraryreservation.common.repository.ReservationRepository;
 import com.example.libraryreservation.common.repository.RoomRepository;
 import com.example.libraryreservation.common.repository.UserRepository;
-import com.example.libraryreservation.reservation.constant.ReservationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,19 +30,19 @@ public class ReservationService {
     private final UserRepository userRepository;
 
     @Transactional
-    public String reservationSeat(ReservationDto reservationDto) {
-        LocalDateTime startTime = reservationDto.getStartTime();
-        LocalDateTime endTime = reservationDto.getEndTime();
+    public void reservationSeat(ReservationDto reservationDto) {
+        LocalDateTime startTime = reservationDto.startTime();
+        LocalDateTime endTime = reservationDto.endTime();
 
-        List<RoomModel> roomModelList = roomRepository.findRoomModelByRoomType(reservationDto.getRoomType());
+        List<RoomModel> roomModelList = roomRepository.findRoomModelByRoomType(reservationDto.roomType());
         if (roomModelList.isEmpty()) {
             throw new LibraryReservationException(CommunalResponse.ROOM_NOT_FOUND);
         }
 
-        RoomModel roomModel = findSeatNumber(roomModelList, reservationDto.getSeatNumber());
+        RoomModel roomModel = findSeatNumber(roomModelList, reservationDto.seatNumber());
 
         if (roomModel == null) {
-            throw new LibraryReservationException(ReservationResponse.SEAT_NUMBER_NOT_FOUND);
+            throw new LibraryReservationException(CommunalResponse.SEAT_NUMBER_NOT_FOUND);
         }
 
         Optional<UserModel> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
@@ -57,15 +56,15 @@ public class ReservationService {
         List<ReservationModel> reservationList = reservationRepository.findReservationModelsByUserModel(userModel);
 
         if (!reservationList.isEmpty()) {
-            throw new LibraryReservationException(ReservationResponse.ALREADY_RESERVATION_USER);
+            throw new LibraryReservationException(CommunalResponse.ALREADY_RESERVATION_USER);
         }
 
         Optional<ReservationModel> checkReservation = reservationRepository.findReservationModelBySeatNumberAndStartTime(
-                roomModel, reservationDto.getStartTime()
+                roomModel, reservationDto.startTime()
         );
 
         if (checkReservation.isPresent()) {
-            throw new LibraryReservationException(ReservationResponse.ALREADY_RESERVATION_SEAT);
+            throw new LibraryReservationException(CommunalResponse.ALREADY_RESERVATION_SEAT);
         }
 
         ReservationModel reservationModel = new ReservationModel();
@@ -75,8 +74,6 @@ public class ReservationService {
         reservationModel.setEndTime(endTime);
 
         reservationRepository.save(reservationModel);
-
-        return "success";
     }
 
     @Transactional(readOnly = true)
@@ -89,10 +86,10 @@ public class ReservationService {
     }
 
     @Transactional
-    public String deleteReservation(long reservationId) {
+    public void deleteReservation(long reservationId) {
         Optional<ReservationModel> reservationModel = reservationRepository.findReservationModelByReservationId(reservationId);
         if (reservationModel.isEmpty()) {
-            throw new LibraryReservationException(ReservationResponse.RESERVATION_NOT_FOUND);
+            throw new LibraryReservationException(CommunalResponse.RESERVATION_NOT_FOUND);
         }
 
         Optional<UserModel> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
@@ -102,18 +99,16 @@ public class ReservationService {
         }
 
         if (!Objects.equals(reservationModel.get().getUserModel().getPhoneNumber(), userModelOptional.get().getPhoneNumber())) {
-            throw new LibraryReservationException(ReservationResponse.USER_NOT_CORRECT);
+            throw new LibraryReservationException(CommunalResponse.USER_NOT_CORRECT);
         }
 
         reservationRepository.delete(reservationModel.get());
-
-        return "success";
     }
 
     private RoomModel findSeatNumber(List<RoomModel> seatList, Integer seatNumber) {
-        for (RoomModel i : seatList) {
-            if (Objects.equals(i.getSeatNumber(), seatNumber)) {
-                return i;
+        for (RoomModel roomModel : seatList) {
+            if (Objects.equals(roomModel.getSeatNumber(), seatNumber)) {
+                return roomModel;
             }
         }
         return null;

@@ -1,7 +1,7 @@
 package com.example.libraryreservation.admin;
 
-import com.example.libraryreservation.admin.constant.AdminResponse;
 import com.example.libraryreservation.common.controller.LibraryReservationException;
+import com.example.libraryreservation.common.controller.constant.CommunalResponse;
 import com.example.libraryreservation.common.model.ReservationModel;
 import com.example.libraryreservation.common.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +25,11 @@ public class AdminService {
     }
 
     @Transactional
-    public String deleteReservation(long reservationId) {
+    public void deleteReservation(long reservationId) {
         Optional<ReservationModel> reservationModel = reservationRepository.findReservationModelByReservationId(reservationId);
         if (reservationModel.isEmpty()) {
-            throw new LibraryReservationException(AdminResponse.NOT_EXIST_RESERVATION);
+            throw new LibraryReservationException(CommunalResponse.RESERVATION_NOT_FOUND);
         }
         reservationRepository.delete(reservationModel.get());
-        return "success";
     }
 }

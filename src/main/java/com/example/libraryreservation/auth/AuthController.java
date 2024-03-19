@@ -24,8 +24,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public String signup(@Valid @RequestBody SignupDto signupDto) {
-        return authService.signup(signupDto);
+    public void signup(@Valid @RequestBody SignupDto signupDto) {
+        authService.signup(signupDto);
     }
 
     @PutMapping("/token")
@@ -34,7 +34,5 @@ public class AuthController {
     }
 
     @GetMapping("/token")
-    public String checkToken() {
-        return authService.checkToken();
-    }
+    public void checkToken() {}
 }

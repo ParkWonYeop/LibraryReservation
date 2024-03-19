@@ -20,7 +20,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/reservation")
-    public String deleteReservation(@RequestParam(name = "id") long reservationId) {
-        return adminService.deleteReservation(reservationId);
+    public void deleteReservation(@RequestParam(name = "id") long reservationId) {
+        adminService.deleteReservation(reservationId);
     }
 }
