@@ -12,7 +12,7 @@ import java.nio.file.AccessDeniedException;
 
 @ControllerAdvice
 @Slf4j
-public class ExceptionControllerAdvice {
+public class GlobalControllerAdvice {
     @ExceptionHandler({
             RuntimeException.class,
             MethodArgumentNotValidException.class,

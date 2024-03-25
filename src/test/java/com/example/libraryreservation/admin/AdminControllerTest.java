@@ -58,20 +58,22 @@ public class AdminControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/admin/reservation")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].['reservationId']").value(1))
-                .andExpect(jsonPath("$[0].['seatNumber'].['roomId']").value(1))
-                .andExpect(jsonPath("$[0].['seatNumber'].['roomType']").value("DIGITAL"))
-                .andExpect(jsonPath("$[0].['seatNumber'].['seatNumber']").value(1))
-                .andExpect(jsonPath("$[0].['startTime']").value("2024-06-04T00:00:00"))
-                .andExpect(jsonPath("$[0].['endTime']").value("2024-06-04T01:00:00"))
-                .andDo(print());
+                .andExpectAll(
+                    status().isOk(),
+                    jsonPath("$").isArray(),
+                    jsonPath("$[0].reservationId").value(1),
+                    jsonPath("$[0].reservationId").isNumber(),
+                    jsonPath("$[0].seatNumber.roomId").value(1),
+                    jsonPath("$[0].seatNumber.roomType").value("DIGITAL"),
+                    jsonPath("$[0].seatNumber.seatNumber").value(1),
+                    jsonPath("$[0].startTime").value("2024-06-04T00:00:00"),
+                    jsonPath("$[0].endTime").value("2024-06-04T01:00:00")
+                    );
     }
 
     @DisplayName("예약 삭제 - 성공")
     @Test
     public void deleteSuccessTest() throws Exception {
-        List<ReservationModel> reservationModel = adminController.getReservationList();
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/admin/reservation")
                         .param("id", "1")
