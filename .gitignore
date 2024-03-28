@@ -36,7 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
+application_log
 application-auth.yml
 application-db.yml
-
-application_log
