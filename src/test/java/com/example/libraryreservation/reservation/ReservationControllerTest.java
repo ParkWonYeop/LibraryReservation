@@ -2,7 +2,6 @@ package com.example.libraryreservation.reservation;
 
 import com.example.libraryreservation.admin.AdminController;
 import com.example.libraryreservation.auth.AuthController;
-import com.example.libraryreservation.auth.dto.LoginDto;
 import com.example.libraryreservation.common.model.ReservationModel;
 import com.example.libraryreservation.common.model.TokenModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static com.example.libraryreservation.fixture.LoginFixtures.loginAddressOne;
+import static com.example.libraryreservation.fixture.LoginFixtures.loginAddressTwo;
+import static com.example.libraryreservation.fixture.ReservationFixtures.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,20 +43,16 @@ public class ReservationControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mockMvc;
-    protected MockHttpSession session;
+    private MockHttpSession session;
 
     @Before
     public void setUp() {
-        this.session = new MockHttpSession();
-        LoginDto loginDto = new LoginDto("01099716733","1234567");
-        TokenModel tokenModel = authController.login(loginDto);
+        session = new MockHttpSession();
+        TokenModel tokenModel = authController.login(loginAddressOne());
+        session.setAttribute("accessToken", tokenModel.getAccessToken());
 
-        this.session.setAttribute("accessToken", tokenModel.getAccessToken());
-
-        LoginDto loginDto2 = new LoginDto("01099716737","1234567");
-        TokenModel tokenModel2 = authController.login(loginDto2);
-
-        this.session.setAttribute("accessToken2", tokenModel2.getAccessToken());
+        TokenModel tokenModel2 = authController.login(loginAddressTwo());
+        session.setAttribute("accessToken2", tokenModel2.getAccessToken());
     }
 
     @After
@@ -66,140 +63,94 @@ public class ReservationControllerTest {
     @DisplayName("예약 테스트 - 성공")
     @Test
     public void addSuccessTest() throws Exception {
-        Map<String, String> body = new HashMap<>();
-
-        LocalDateTime startTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
-
-        body.put("roomType", "STUDYING");
-        body.put("seatNumber", "1");
-        body.put("startTime", startTime.toString());
-        body.put("endTime", startTime.plusHours(1).toString());
-
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/reservation")
-                        .content(objectMapper.writeValueAsString(body))
+                        .content(objectMapper.writeValueAsString(createReservationSeatNumber("1")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken2")))
-                .andExpect(status().isCreated())
-                .andDo(print());
+                .andExpect(status().isCreated());
     }
 
     @DisplayName("예약 테스트 - roomType")
     @Test
     public void addRoomTypeTest() throws Exception {
-        Map<String, String> body = new HashMap<>();
-
-        LocalDateTime startTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
-
-        body.put("roomType", "STUDYINGs");
-        body.put("seatNumber", "1");
-        body.put("startTime", startTime.toString());
-        body.put("endTime", startTime.plusHours(1).toString());
-
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/reservation")
-                        .content(objectMapper.writeValueAsString(body))
+                        .content(objectMapper.writeValueAsString(createReservationRoomType("STUDYINGs")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("JSON parse error: Cannot deserialize value of type `com.example.libraryreservation.common.enums.RoomEnum` from String \"STUDYINGs\": not one of the values accepted for Enum class: [DIGITAL, STUDYING, READING]"))
-                .andDo(print());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$").value("타입이 잘못되었습니다.")
+                );
     }
 
     @DisplayName("예약 테스트 - seatNumber/문자")
     @Test
     public void addSeatNumberStringTest() throws Exception {
-        Map<String, String> body = new HashMap<>();
-
-        LocalDateTime startTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
-
-        body.put("roomType", "STUDYING");
-        body.put("seatNumber", "a");
-        body.put("startTime", startTime.toString());
-        body.put("endTime", startTime.plusHours(1).toString());
-
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/reservation")
-                        .content(objectMapper.writeValueAsString(body))
+                        .content(objectMapper.writeValueAsString(createReservationSeatNumber("a")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
-                .andExpect(status().isBadRequest())
-                .andDo(print());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$").value("타입이 잘못되었습니다.")
+                );
     }
 
     @DisplayName("예약 테스트 - seatNumber/특수문자")
     @Test
     public void addSeatNumberSpecialStringTest() throws Exception {
-        Map<String, String> body = new HashMap<>();
-
-        LocalDateTime startTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
-
-        body.put("roomType", "STUDYING");
-        body.put("seatNumber", "*");
-        body.put("startTime", startTime.toString());
-        body.put("endTime", startTime.plusHours(1).toString());
-
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/reservation")
-                        .content(objectMapper.writeValueAsString(body))
+                        .content(objectMapper.writeValueAsString(createReservationSeatNumber("*")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
-                .andExpect(status().isBadRequest())
-                .andDo(print());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$").value("타입이 잘못되었습니다.")
+                );
     }
 
     @DisplayName("예약 테스트 - seatNumber/공백")
     @Test
     public void addSeatBlankTest() throws Exception {
-        Map<String, String> body = new HashMap<>();
-
-        LocalDateTime startTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
-
-        body.put("roomType", "STUDYING");
-        body.put("seatNumber", " ");
-        body.put("startTime", startTime.toString());
-        body.put("endTime", startTime.plusHours(1).toString());
-
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/reservation")
-                        .content(objectMapper.writeValueAsString(body))
+                        .content(objectMapper.writeValueAsString(createReservationSeatNumber(" ")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
-                .andExpect(status().isBadRequest())
-                .andDo(print());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$").value("빈 문자열 입니다.")
+                );
     }
 
     @DisplayName("예약 테스트 - time/past")
     @Test
     public void addTimePastTest() throws Exception {
-        Map<String, String> body = new HashMap<>();
-
         LocalDateTime startTime = LocalDateTime.now().plusHours(-2).withMinute(0).withSecond(0).withNano(0);
-
-        body.put("roomType", "STUDYING");
-        body.put("seatNumber", "1");
-        body.put("startTime", startTime.toString());
-        body.put("endTime", startTime.plusHours(1).toString());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/reservation")
-                        .content(objectMapper.writeValueAsString(body))
+                        .content(objectMapper.writeValueAsString(createReservationDate(startTime)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
-                .andExpect(status().isBadRequest())
-                .andDo(print());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$").value("현재보다 과거입니다.")
+                );
     }
 
     @DisplayName("예약 삭제 - 성공")
     @Test
     public void deleteTest() throws Exception {
-        List<ReservationModel> reservationModel = adminController.getReservationList();
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/reservation")
                         .param("id", "1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
     @DisplayName("예약 삭제 - 문자")
@@ -209,9 +160,10 @@ public class ReservationControllerTest {
                         .delete("/reservation")
                         .param("id", "a")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken2")))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("Failed to convert value of type 'java.lang.String' to required type 'long'; For input string: \"a\""))
-                .andDo(print());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$").value("타입이 잘못되었습니다.")
+                );
     }
 
     @DisplayName("예약 삭제 - 특수 문자")
@@ -221,9 +173,10 @@ public class ReservationControllerTest {
                         .delete("/reservation")
                         .param("id", "*")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken2")))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("Failed to convert value of type 'java.lang.String' to required type 'long'; For input string: \"*\""))
-                .andDo(print());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$").value("타입이 잘못되었습니다.")
+                );
     }
 
     @DisplayName("예약 삭제 - 공백")
@@ -233,21 +186,22 @@ public class ReservationControllerTest {
                         .delete("/reservation")
                         .param("id", " ")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken2")))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("Failed to convert value of type 'java.lang.String' to required type 'long'; For input string: \"\""))
-                .andDo(print());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$").value("타입이 잘못되었습니다.")
+                );
     }
 
     @DisplayName("예약 삭제 - 다른 유저")
     @Test
     public void deleteOtherUserTest() throws Exception {
-        List<ReservationModel> reservationModel = adminController.getReservationList();
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/reservation")
                         .param("id", String.valueOf(1))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken2")))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").value("유저가 일치 하지 않습니다."))
-                .andDo(print());
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$").value("유저가 일치 하지 않습니다.")
+                );
     }
 }

@@ -1,6 +1,7 @@
 package com.example.libraryreservation.admin;
 
 import com.example.libraryreservation.common.model.ReservationModel;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

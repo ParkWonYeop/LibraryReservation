@@ -12,36 +12,41 @@ import java.nio.file.AccessDeniedException;
 
 @ControllerAdvice
 @Slf4j
-public class ExceptionControllerAdvice {
-    @ExceptionHandler({
-            RuntimeException.class,
-            MethodArgumentNotValidException.class,
-            MissingServletRequestParameterException.class
-    })
-    public ResponseEntity<Object> handleBadRequestException(final RuntimeException runtimeException) {
-        log.error(runtimeException.getMessage());
-        return ResponseEntity.badRequest().body(runtimeException.getMessage());
+public class GlobalControllerAdvice {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidException(final MethodArgumentNotValidException methodArgumentNotValidException) {
+        log.info("asd");
+        log.error(methodArgumentNotValidException.getMessage());
+        return ResponseEntity.badRequest().body(methodArgumentNotValidException.getFieldErrors().get(0).getDefaultMessage());
     }
 
     @ExceptionHandler({
-            AccessDeniedException.class
+            RuntimeException.class,
+            MissingServletRequestParameterException.class
     })
+    public ResponseEntity<Object> handleBadRequestException(final RuntimeException runtimeException) {
+        String errorMessage = runtimeException.getMessage();
+        if(errorMessage.contains("Failed to convert value of type") || errorMessage.contains("JSON parse error")) {
+            errorMessage = "타입이 잘못되었습니다.";
+        }
+        log.error(errorMessage);
+        return ResponseEntity.badRequest().body(errorMessage);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(final AccessDeniedException accessDeniedException) {
         log.error(accessDeniedException.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(accessDeniedException.getMessage());
     }
 
-    @ExceptionHandler({
-            Exception.class
-    })
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(final Exception exception) {
         log.error(exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
     }
 
-    @ExceptionHandler({
-            LibraryReservationException.class
-    })
+    @ExceptionHandler(LibraryReservationException.class)
     public ResponseEntity<Object> handleLibraryReservationException(final LibraryReservationException libraryReservationException) {
         log.error(libraryReservationException.getMessage());
         return ResponseEntity.status(libraryReservationException.getHttpStatus()).body(libraryReservationException.getMessage());
