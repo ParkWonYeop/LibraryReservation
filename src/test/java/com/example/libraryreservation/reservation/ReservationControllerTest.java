@@ -2,7 +2,6 @@ package com.example.libraryreservation.reservation;
 
 import com.example.libraryreservation.admin.AdminController;
 import com.example.libraryreservation.auth.AuthController;
-import com.example.libraryreservation.common.model.ReservationModel;
 import com.example.libraryreservation.common.model.TokenModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
@@ -21,9 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static com.example.libraryreservation.fixture.LoginFixtures.loginAddressOne;
 import static com.example.libraryreservation.fixture.LoginFixtures.loginAddressTwo;
@@ -37,8 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ReservationControllerTest {
     @Autowired
     private AuthController authController;
-    @Autowired
-    private AdminController adminController;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired

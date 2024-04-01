@@ -1,7 +1,6 @@
 package com.example.libraryreservation.room;
 
 import com.example.libraryreservation.auth.AuthController;
-import com.example.libraryreservation.auth.dto.LoginDto;
 import com.example.libraryreservation.common.model.TokenModel;
 import org.junit.After;
 import org.junit.Before;
@@ -18,8 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.example.libraryreservation.fixture.LoginFixtures.loginAddressOne;
-import static com.example.libraryreservation.fixture.LoginFixtures.loginAddressTwo;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

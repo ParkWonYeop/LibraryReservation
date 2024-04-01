@@ -16,7 +16,6 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidException(final MethodArgumentNotValidException methodArgumentNotValidException) {
-        log.info("asd");
         log.error(methodArgumentNotValidException.getMessage());
         return ResponseEntity.badRequest().body(methodArgumentNotValidException.getFieldErrors().get(0).getDefaultMessage());
     }
