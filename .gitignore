@@ -39,3 +39,5 @@ out/
 application_log
 application-auth.yml
 application-db.yml
+application-dev-auth.yml
+application-dev-db.yml

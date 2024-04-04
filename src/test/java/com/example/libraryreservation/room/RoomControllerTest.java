@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static com.example.libraryreservation.fixture.LoginFixtures.loginAddressOne;
+import static com.example.libraryreservation.fixture.AuthFixtures.loginAddressOne;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,15 +47,16 @@ public class RoomControllerTest {
     public void roomListTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/room/list")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isOk(),
+                        jsonPath("$").isArray(),
                         jsonPath("$.[0].roomId").value(1),
                         jsonPath("$.[0].roomType").value("DIGITAL"),
                         jsonPath("$.[0].seatNumber").value(1),
-                        jsonPath("$.[29].roomId").value(30),
-                        jsonPath("$.[29].roomType").value("STUDYING"),
-                        jsonPath("$.[29].seatNumber").value(15)
+                        jsonPath("$.[18].roomId").value(19),
+                        jsonPath("$.[18].roomType").value("STUDYING"),
+                        jsonPath("$.[18].seatNumber").value(8)
                 );
     }
 
@@ -65,16 +66,16 @@ public class RoomControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/room")
                         .param("roomType", "STUDYING")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$").isArray(),
-                        jsonPath("$.[0].roomId").value(16),
+                        jsonPath("$.[0].roomId").value(12),
                         jsonPath("$.[0].roomType").value("STUDYING"),
                         jsonPath("$.[0].seatNumber").value(1),
-                        jsonPath("$.[14].roomId").value(30),
-                        jsonPath("$.[14].roomType").value("STUDYING"),
-                        jsonPath("$.[14].seatNumber").value(15)
+                        jsonPath("$.[7].roomId").value(19),
+                        jsonPath("$.[7].roomType").value("STUDYING"),
+                        jsonPath("$.[7].seatNumber").value(8)
                 );
     }
 
@@ -84,7 +85,7 @@ public class RoomControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/room")
                         .param("roomType", "STUDYINGs")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isBadRequest(),
                         jsonPath("$").value("타입이 잘못되었습니다.")
@@ -97,8 +98,8 @@ public class RoomControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/room")
                         .param("roomType", " ")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
-                .andExpect(status().isBadRequest());
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
+                .andExpectAll(status().isBadRequest());
     }
 
     @DisplayName("방 종류 - 특수 문자")
@@ -107,7 +108,7 @@ public class RoomControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/room")
                         .param("roomType", "*")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.session.getAttribute("accessToken")))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isBadRequest(),
                         jsonPath("$").value("타입이 잘못되었습니다.")
