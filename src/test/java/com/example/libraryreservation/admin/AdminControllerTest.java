@@ -14,10 +14,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.libraryreservation.fixture.LoginFixtures.loginAddressOne;
+import static com.example.libraryreservation.fixture.AuthFixtures.loginAddressOne;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,10 +35,11 @@ public class AdminControllerTest {
 
     @Before
     public void setUp() {
-        this.session = new MockHttpSession();
+        session = new MockHttpSession();
+
         TokenModel tokenModel = authController.login(loginAddressOne());
 
-        this.session.setAttribute("accessToken", tokenModel.getAccessToken());
+        session.setAttribute("accessToken", tokenModel.getAccessToken());
     }
 
     @After
@@ -48,8 +50,7 @@ public class AdminControllerTest {
     @DisplayName("예약 리스트")
     @Test
     public void reservationTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/admin/reservation")
+        mockMvc.perform(get("/admin/reservation")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isOk(),
@@ -66,18 +67,16 @@ public class AdminControllerTest {
     @DisplayName("예약 삭제 - 성공")
     @Test
     public void deleteSuccessTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/admin/reservation")
+        mockMvc.perform(delete("/admin/reservation")
                         .param("id", "1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
-                .andExpect(status().isOk());
+                .andExpectAll(status().isOk());
     }
 
     @DisplayName("예약 삭제 - 없는 인덱스")
     @Test
     public void deleteWrongIndexTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/admin/reservation")
+        mockMvc.perform(delete("/admin/reservation")
                         .param("id", "0")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
@@ -89,8 +88,7 @@ public class AdminControllerTest {
     @DisplayName("예약 삭제 - 빈칸")
     @Test
     public void deleteBlankTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/admin/reservation")
+        mockMvc.perform(delete("/admin/reservation")
                         .param("id", " ")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
@@ -102,8 +100,7 @@ public class AdminControllerTest {
     @DisplayName("예약 삭제 - 특수 문자")
     @Test
     public void deleteSpecialCharacterTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/admin/reservation")
+        mockMvc.perform(delete("/admin/reservation")
                         .param("id", "*")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(

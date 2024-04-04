@@ -2,7 +2,7 @@ package com.example.libraryreservation.fixture;
 
 import com.example.libraryreservation.auth.dto.LoginDto;
 
-public class LoginFixtures {
+public class AuthFixtures {
     public static LoginDto loginAddressOne() {
         return new LoginDto("01099716733", "1234567");
     }

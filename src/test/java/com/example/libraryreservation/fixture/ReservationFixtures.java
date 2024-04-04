@@ -1,5 +1,7 @@
 package com.example.libraryreservation.fixture;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +20,7 @@ public class ReservationFixtures {
         return body;
     }
 
-    public static Map<String, String> createReservationRoomType(String roomType) {
+    public static Map<String, String> createReservationRoomType(String roomType) throws JsonProcessingException {
         Map<String, String> body = new HashMap<>();
 
         LocalDateTime startTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);

@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:mysql://58.122.188.69:3306/reservation
+    username: admin
+    password: 411311pwy!
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
