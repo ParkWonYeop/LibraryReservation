@@ -77,7 +77,7 @@ public class AdminControllerTest {
     @Test
     public void deleteWrongIndexTest() throws Exception {
         mockMvc.perform(delete("/admin/reservation")
-                        .param("id", "0")
+                        .param("id", "9999")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isBadRequest(),
@@ -93,7 +93,19 @@ public class AdminControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isBadRequest(),
-                        jsonPath("$").value("타입이 잘못되었습니다.")
+                        jsonPath("$").value("값이 없습니다.")
+                );
+    }
+
+    @DisplayName("예약 삭제 - 빈칸")
+    @Test
+    public void deleteMinusTest() throws Exception {
+        mockMvc.perform(delete("/admin/reservation")
+                        .param("id", "-1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$").value("값이 음수입니다.")
                 );
     }
 

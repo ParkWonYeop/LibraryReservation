@@ -172,7 +172,7 @@ public class ReservationControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken2")))
                 .andExpectAll(
                         status().isBadRequest(),
-                        jsonPath("$").value("타입이 잘못되었습니다.")
+                        jsonPath("$").value("값이 없습니다.")
                 );
     }
 

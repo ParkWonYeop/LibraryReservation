@@ -1,11 +1,13 @@
 package com.example.libraryreservation.reservation;
 
+import com.example.libraryreservation.common.dto.ReservationDeleteDto;
 import com.example.libraryreservation.common.dto.ReservationDto;
 import com.example.libraryreservation.common.model.ReservationModel;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@Validated
 @RequestMapping("/reservation")
 public class ReservationController {
     private final ReservationService reservationService;
@@ -29,7 +32,7 @@ public class ReservationController {
     }
 
     @DeleteMapping()
-    public void deleteReservation(@RequestParam(name = "id") long id) {
-        reservationService.deleteReservation(id);
+    public void deleteReservation(@Valid ReservationDeleteDto reservationDeleteDto) {
+        reservationService.deleteReservation(reservationDeleteDto.id());
     }
 }

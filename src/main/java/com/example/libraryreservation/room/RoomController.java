@@ -1,12 +1,13 @@
 package com.example.libraryreservation.room;
 
-import com.example.libraryreservation.common.enums.RoomEnum;
 import com.example.libraryreservation.common.model.RoomModel;
+import com.example.libraryreservation.room.dto.RoomTypeDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@Validated
 @RequestMapping("/room")
 public class RoomController {
     private final RoomService roomService;
@@ -24,7 +26,7 @@ public class RoomController {
     }
 
     @GetMapping()
-    public List<RoomModel> getRoom(@RequestParam(name = "roomType") RoomEnum roomType) {
-        return roomService.getRoom(roomType);
+    public List<RoomModel> getRoom(@Valid RoomTypeDto roomTypeDto) {
+        return roomService.getRoom(roomTypeDto.roomType());
     }
 }

@@ -49,8 +49,8 @@
 5. '수용하는 데에' 라고 썼으나 '유연한 사고방식'으로 문장을 마무리 하는것은 어색함.
 6. 통합 테스트 / 단위 테스트 를 다시 한 번 공부하고 이력서에 반영할 것.
 7. 어차피 앞으로 500번은 이력서를 더 수정할테니, 과감하게 작성하고 피드백 받을 것.
-8. 다시 한 번 andExpectAll 로 통일해보기
-9. MockMvcRequestBuilders 하위 get post delete put 등등의 static 메소드는 import로 리팩토링.
-10. TEST DB는 H2 를 적용할 것. 최소한 테스트 환경은 언제, 어디서나, 어느 컴퓨터에서나 돌아가게끔 세팅할 것.
-11. spring.profiles.active 는 local, dev, prod 세 개 값중 하나씩만 들어가게끔 수정할 것.
-12. reqeustParam 을 DTO화해서 @Valid 적용해볼 것.
+8. 다시 한 번 andExpectAll 로 통일해보기 *
+9. MockMvcRequestBuilders 하위 get post delete put 등등의 static 메소드는 import로 리팩토링. *
+10. TEST DB는 H2 를 적용할 것. 최소한 테스트 환경은 언제, 어디서나, 어느 컴퓨터에서나 돌아가게끔 세팅할 것. *
+11. spring.profiles.active 는 local, dev, prod 세 개 값중 하나씩만 들어가게끔 수정할 것. *
+12. reqeustParam 을 DTO화해서 @Valid 적용해볼 것. *

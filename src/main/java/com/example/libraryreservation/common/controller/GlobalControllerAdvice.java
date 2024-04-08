@@ -13,11 +13,18 @@ import java.nio.file.AccessDeniedException;
 @ControllerAdvice
 @Slf4j
 public class GlobalControllerAdvice {
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({
+            MethodArgumentNotValidException.class,
+    })
     public ResponseEntity<Object> handleValidException(final MethodArgumentNotValidException methodArgumentNotValidException) {
-        log.error(methodArgumentNotValidException.getMessage());
-        return ResponseEntity.badRequest().body(methodArgumentNotValidException.getFieldErrors().get(0).getDefaultMessage());
+        String errorMessage = methodArgumentNotValidException.getMessage();
+        if (errorMessage.contains("Failed to convert value of type") || errorMessage.contains("JSON parse error")) {
+            errorMessage = "타입이 잘못되었습니다.";
+        } else {
+            errorMessage = methodArgumentNotValidException.getFieldErrors().get(0).getDefaultMessage();
+        }
+        log.error(errorMessage);
+        return ResponseEntity.badRequest().body(errorMessage);
     }
 
     @ExceptionHandler({
@@ -26,7 +33,7 @@ public class GlobalControllerAdvice {
     })
     public ResponseEntity<Object> handleBadRequestException(final RuntimeException runtimeException) {
         String errorMessage = runtimeException.getMessage();
-        if(errorMessage.contains("Failed to convert value of type") || errorMessage.contains("JSON parse error")) {
+        if (errorMessage.contains("Failed to convert value of type") || errorMessage.contains("JSON parse error")) {
             errorMessage = "타입이 잘못되었습니다.";
         }
         log.error(errorMessage);
