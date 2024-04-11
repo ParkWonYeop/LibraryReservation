@@ -54,3 +54,12 @@
 10. TEST DB는 H2 를 적용할 것. 최소한 테스트 환경은 언제, 어디서나, 어느 컴퓨터에서나 돌아가게끔 세팅할 것. *
 11. spring.profiles.active 는 local, dev, prod 세 개 값중 하나씩만 들어가게끔 수정할 것. *
 12. reqeustParam 을 DTO화해서 @Valid 적용해볼 것. *
+
+
+## 2024-04-08
+1. 빌드 돌릴 때 test를 함께 하도록 세팅할 것.
+2. application-test.yml 따로 만들 것.
+3. local 환경은 h2 말고 mysql 사용하도록 개선할 것.
+4. AuthControllerTest 를 만들고, Validation 순서를 지정하는 방법에 대해 스터디 해보고 적용해볼 것.
+5. Kotlin 스터디 해볼 것.
+6. 이력서 수정할 것.
