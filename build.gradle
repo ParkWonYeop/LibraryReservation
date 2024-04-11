@@ -44,6 +44,13 @@ dependencies {
     implementation group:'net.logstash.logback', name:'logstash-logback-encoder', version:'6.1'
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+    doFirst {
+        if (filter.commandLineIncludePatterns.empty) {
+            useJUnitPlatform {
+                excludeTags "Reservation"
+            }
+        }
+    }
 }
