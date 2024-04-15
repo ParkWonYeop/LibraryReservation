@@ -1,8 +1,8 @@
 package com.example.libraryreservation.room;
 
 import com.example.libraryreservation.common.model.RoomModel;
+import com.example.libraryreservation.common.validation.ValidationSequence;
 import com.example.libraryreservation.room.dto.RoomTypeDto;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -26,7 +26,7 @@ public class RoomController {
     }
 
     @GetMapping()
-    public List<RoomModel> getRoom(@Valid RoomTypeDto roomTypeDto) {
+    public List<RoomModel> getRoom(@Validated(ValidationSequence.class) RoomTypeDto roomTypeDto) {
         return roomService.getRoom(roomTypeDto.roomType());
     }
 }

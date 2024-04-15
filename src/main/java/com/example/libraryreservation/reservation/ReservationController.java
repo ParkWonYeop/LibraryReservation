@@ -3,7 +3,7 @@ package com.example.libraryreservation.reservation;
 import com.example.libraryreservation.common.dto.ReservationDeleteDto;
 import com.example.libraryreservation.common.dto.ReservationDto;
 import com.example.libraryreservation.common.model.ReservationModel;
-import jakarta.validation.Valid;
+import com.example.libraryreservation.common.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class ReservationController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public void reservationSeat(@Valid @RequestBody ReservationDto reservationDto) {
+    public void reservationSeat(@Validated(ValidationSequence.class) @RequestBody ReservationDto reservationDto) {
         reservationService.reservationSeat(reservationDto);
     }
 
@@ -32,7 +32,7 @@ public class ReservationController {
     }
 
     @DeleteMapping()
-    public void deleteReservation(@Valid ReservationDeleteDto reservationDeleteDto) {
+    public void deleteReservation(@Validated(ValidationSequence.class) ReservationDeleteDto reservationDeleteDto) {
         reservationService.deleteReservation(reservationDeleteDto.id());
     }
 }

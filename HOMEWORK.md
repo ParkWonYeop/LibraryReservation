@@ -57,9 +57,11 @@
 
 
 ## 2024-04-08
-1. 빌드 돌릴 때 test를 함께 하도록 세팅할 것.
-2. application-test.yml 따로 만들 것.
-3. local 환경은 h2 말고 mysql 사용하도록 개선할 것.
-4. AuthControllerTest 를 만들고, Validation 순서를 지정하는 방법에 대해 스터디 해보고 적용해볼 것.
-5. Kotlin 스터디 해볼 것.
+1. 빌드 돌릴 때 test를 함께 하도록 세팅할 것. *
+2. application-test.yml 따로 만들 것. *
+3. local 환경은 h2 말고 mysql 사용하도록 개선할 것. *
+4. AuthControllerTest 를 만들고, Validation 순서를 지정하는 방법에 대해 스터디 해보고 적용해볼 것. *
+   - Validation 순서 정하기 *
+   - AuthControllerTest 만들기 *
+5. Kotlin 스터디 해볼 것. *
 6. 이력서 수정할 것.

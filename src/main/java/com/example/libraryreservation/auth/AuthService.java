@@ -2,6 +2,7 @@ package com.example.libraryreservation.auth;
 
 import com.example.libraryreservation.auth.dto.LoginDto;
 import com.example.libraryreservation.auth.dto.RefreshDto;
+import com.example.libraryreservation.auth.dto.RefreshResponseDto;
 import com.example.libraryreservation.auth.dto.SignupDto;
 import com.example.libraryreservation.common.controller.LibraryReservationException;
 import com.example.libraryreservation.common.controller.constant.CommunalResponse;
@@ -78,7 +79,7 @@ public class AuthService {
     }
 
     @Transactional
-    public String refreshToken(RefreshDto refreshDto) {
+    public RefreshResponseDto refreshToken(RefreshDto refreshDto) {
         if (JwtUtil.isExpired(refreshDto.refreshToken(), secretKey)) {
             throw new AccessDeniedException("refreshToken is expired");
         }
@@ -95,10 +96,12 @@ public class AuthService {
 
             if (Objects.equals(tokenModel.get().getRefreshToken(), refreshDto.refreshToken())) {
                 String accessToken = JwtUtil.generateToken(userModel, secretKey);
+                String refreshToken = JwtUtil.createRefreshToken(secretKey);
                 tokenModel.get().setAccessToken(accessToken);
+                tokenModel.get().setRefreshToken(refreshToken);
                 tokenRepository.save(tokenModel.get());
 
-                return accessToken;
+                return new RefreshResponseDto(accessToken,refreshToken);
             }
             throw new AccessDeniedException("refreshToken is not correct");
         }
