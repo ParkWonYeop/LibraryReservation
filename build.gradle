@@ -33,7 +33,7 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.3'
 
     //compileOnly
-    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
 
     //annotationProcessor
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
