@@ -75,7 +75,7 @@ public class ReservationControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isBadRequest(),
-                        jsonPath("$").value("타입이 잘못되었습니다.")
+                        jsonPath("$").value("Enum에 없는 값입니다.")
                 );
     }
 

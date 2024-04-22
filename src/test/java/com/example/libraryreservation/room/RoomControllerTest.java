@@ -15,9 +15,9 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.example.libraryreservation.fixture.AuthFixtures.loginAddressOne;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,8 +47,7 @@ public class RoomControllerTest {
     @DisplayName("방 리스트")
     @Test
     public void roomListTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/room/list")
+        mockMvc.perform(get("/room/list")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isOk(),
@@ -65,8 +64,7 @@ public class RoomControllerTest {
     @DisplayName("방 종류")
     @Test
     public void roomTypeTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/room")
+        mockMvc.perform(get("/room")
                         .param("roomType", "STUDYING")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
@@ -84,21 +82,19 @@ public class RoomControllerTest {
     @DisplayName("방 종류 - 오타")
     @Test
     public void roomTypeErrorTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/room")
+        mockMvc.perform(get("/room")
                         .param("roomType", "STUDYINGs")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isBadRequest(),
-                        jsonPath("$").value("타입이 잘못되었습니다.")
+                        jsonPath("$").value("Enum에 없는 값입니다.")
                 );
     }
 
     @DisplayName("방 종류 - 공백")
     @Test
     public void roomTypeBlankTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/room")
+        mockMvc.perform(get("/room")
                         .param("roomType", " ")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(status().isBadRequest());
@@ -107,13 +103,12 @@ public class RoomControllerTest {
     @DisplayName("방 종류 - 특수 문자")
     @Test
     public void roomTypeSpecialStringTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/room")
+        mockMvc.perform(get("/room")
                         .param("roomType", "*")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + session.getAttribute("accessToken")))
                 .andExpectAll(
                         status().isBadRequest(),
-                        jsonPath("$").value("타입이 잘못되었습니다.")
+                        jsonPath("$").value("Enum에 없는 값입니다.")
                 );
     }
 }

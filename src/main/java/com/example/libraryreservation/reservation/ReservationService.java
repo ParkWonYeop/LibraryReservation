@@ -3,6 +3,7 @@ package com.example.libraryreservation.reservation;
 import com.example.libraryreservation.common.controller.LibraryReservationException;
 import com.example.libraryreservation.common.controller.constant.CommunalResponse;
 import com.example.libraryreservation.common.dto.ReservationDto;
+import com.example.libraryreservation.common.enums.RoomEnum;
 import com.example.libraryreservation.common.model.ReservationModel;
 import com.example.libraryreservation.common.model.RoomModel;
 import com.example.libraryreservation.common.model.UserModel;
@@ -34,7 +35,9 @@ public class ReservationService {
         LocalDateTime startTime = reservationDto.startTime();
         LocalDateTime endTime = reservationDto.endTime();
 
-        List<RoomModel> roomModelList = roomRepository.findRoomModelByRoomType(reservationDto.roomType());
+        RoomEnum roomEnum = RoomEnum.valueOf(reservationDto.roomType());
+
+        List<RoomModel> roomModelList = roomRepository.findRoomModelByRoomType(roomEnum);
         if (roomModelList.isEmpty()) {
             throw new LibraryReservationException(CommunalResponse.ROOM_NOT_FOUND);
         }

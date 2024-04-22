@@ -1,5 +1,6 @@
 package com.example.libraryreservation.room;
 
+import com.example.libraryreservation.common.enums.RoomEnum;
 import com.example.libraryreservation.common.model.RoomModel;
 import com.example.libraryreservation.common.validation.ValidationSequence;
 import com.example.libraryreservation.room.dto.RoomTypeDto;
@@ -27,6 +28,6 @@ public class RoomController {
 
     @GetMapping()
     public List<RoomModel> getRoom(@Validated(ValidationSequence.class) RoomTypeDto roomTypeDto) {
-        return roomService.getRoom(roomTypeDto.roomType());
+        return roomService.getRoom(RoomEnum.valueOf(roomTypeDto.roomType()));
     }
 }
