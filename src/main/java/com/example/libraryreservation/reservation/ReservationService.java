@@ -4,9 +4,9 @@ import com.example.libraryreservation.common.controller.LibraryReservationExcept
 import com.example.libraryreservation.common.controller.constant.CommunalResponse;
 import com.example.libraryreservation.common.dto.ReservationDto;
 import com.example.libraryreservation.common.enums.RoomEnum;
-import com.example.libraryreservation.common.model.ReservationModel;
-import com.example.libraryreservation.common.model.RoomModel;
-import com.example.libraryreservation.common.model.UserModel;
+import com.example.libraryreservation.common.model.ReservationEntity;
+import com.example.libraryreservation.common.model.RoomEntity;
+import com.example.libraryreservation.common.model.UserEntity;
 import com.example.libraryreservation.common.repository.ReservationRepository;
 import com.example.libraryreservation.common.repository.RoomRepository;
 import com.example.libraryreservation.common.repository.UserRepository;
@@ -37,51 +37,51 @@ public class ReservationService {
 
         RoomEnum roomEnum = RoomEnum.valueOf(reservationDto.roomType());
 
-        List<RoomModel> roomModelList = roomRepository.findRoomModelByRoomType(roomEnum);
-        if (roomModelList.isEmpty()) {
+        List<RoomEntity> roomEntityList = roomRepository.findRoomModelByRoomType(roomEnum);
+        if (roomEntityList.isEmpty()) {
             throw new LibraryReservationException(CommunalResponse.ROOM_NOT_FOUND);
         }
 
-        RoomModel roomModel = findSeatNumber(roomModelList, reservationDto.seatNumber());
+        RoomEntity roomEntity = findSeatNumber(roomEntityList, reservationDto.seatNumber());
 
-        if (roomModel == null) {
+        if (roomEntity == null) {
             throw new LibraryReservationException(CommunalResponse.SEAT_NUMBER_NOT_FOUND);
         }
 
-        Optional<UserModel> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
+        Optional<UserEntity> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
 
         if (userModelOptional.isEmpty()) {
             throw new LibraryReservationException(CommunalResponse.USER_NOT_FOUND);
         }
 
-        UserModel userModel = userModelOptional.get();
+        UserEntity userEntity = userModelOptional.get();
 
-        List<ReservationModel> reservationList = reservationRepository.findReservationModelsByUserModel(userModel);
+        List<ReservationEntity> reservationList = reservationRepository.findReservationModelsByUserModel(userEntity);
 
         if (!reservationList.isEmpty()) {
             throw new LibraryReservationException(CommunalResponse.ALREADY_RESERVATION_USER);
         }
 
-        Optional<ReservationModel> checkReservation = reservationRepository.findReservationModelBySeatNumberAndStartTime(
-                roomModel, reservationDto.startTime()
+        Optional<ReservationEntity> checkReservation = reservationRepository.findReservationModelBySeatNumberAndStartTime(
+                roomEntity, reservationDto.startTime()
         );
 
         if (checkReservation.isPresent()) {
             throw new LibraryReservationException(CommunalResponse.ALREADY_RESERVATION_SEAT);
         }
 
-        ReservationModel reservationModel = new ReservationModel();
-        reservationModel.setSeatNumber(roomModel);
-        reservationModel.setUserModel(userModel);
-        reservationModel.setStartTime(startTime);
-        reservationModel.setEndTime(endTime);
+        ReservationEntity reservationEntity = new ReservationEntity();
+        reservationEntity.setSeatNumber(roomEntity);
+        reservationEntity.setUserEntity(userEntity);
+        reservationEntity.setStartTime(startTime);
+        reservationEntity.setEndTime(endTime);
 
-        reservationRepository.save(reservationModel);
+        reservationRepository.save(reservationEntity);
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationModel> getReservationList() {
-        Optional<UserModel> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
+    public List<ReservationEntity> getReservationList() {
+        Optional<UserEntity> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
         if (userModelOptional.isEmpty()) {
             throw new LibraryReservationException(CommunalResponse.USER_NOT_FOUND);
         }
@@ -90,28 +90,28 @@ public class ReservationService {
 
     @Transactional
     public void deleteReservation(long reservationId) {
-        Optional<ReservationModel> reservationModel = reservationRepository.findReservationModelByReservationId(reservationId);
+        Optional<ReservationEntity> reservationModel = reservationRepository.findReservationModelByReservationId(reservationId);
         if (reservationModel.isEmpty()) {
             throw new LibraryReservationException(CommunalResponse.RESERVATION_NOT_FOUND);
         }
 
-        Optional<UserModel> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
+        Optional<UserEntity> userModelOptional = userRepository.findUserModelByPhoneNumber(getCurrentMemberId());
 
         if (userModelOptional.isEmpty()) {
             throw new LibraryReservationException(CommunalResponse.USER_NOT_FOUND);
         }
 
-        if (!Objects.equals(reservationModel.get().getUserModel().getPhoneNumber(), userModelOptional.get().getPhoneNumber())) {
+        if (!Objects.equals(reservationModel.get().getUserEntity().getPhoneNumber(), userModelOptional.get().getPhoneNumber())) {
             throw new LibraryReservationException(CommunalResponse.USER_NOT_CORRECT);
         }
 
         reservationRepository.delete(reservationModel.get());
     }
 
-    private RoomModel findSeatNumber(List<RoomModel> seatList, Integer seatNumber) {
-        for (RoomModel roomModel : seatList) {
-            if (Objects.equals(roomModel.getSeatNumber(), seatNumber)) {
-                return roomModel;
+    private RoomEntity findSeatNumber(List<RoomEntity> seatList, Integer seatNumber) {
+        for (RoomEntity roomEntity : seatList) {
+            if (Objects.equals(roomEntity.getSeatNumber(), seatNumber)) {
+                return roomEntity;
             }
         }
         return null;

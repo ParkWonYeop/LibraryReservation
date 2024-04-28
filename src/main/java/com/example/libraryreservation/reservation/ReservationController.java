@@ -2,7 +2,7 @@ package com.example.libraryreservation.reservation;
 
 import com.example.libraryreservation.common.dto.ReservationDeleteDto;
 import com.example.libraryreservation.common.dto.ReservationDto;
-import com.example.libraryreservation.common.model.ReservationModel;
+import com.example.libraryreservation.common.model.ReservationEntity;
 import com.example.libraryreservation.common.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class ReservationController {
     }
 
     @GetMapping()
-    public List<ReservationModel> getReservationList() {
+    public List<ReservationEntity> getReservationList() {
         return reservationService.getReservationList();
     }
 

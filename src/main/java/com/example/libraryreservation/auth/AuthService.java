@@ -7,8 +7,8 @@ import com.example.libraryreservation.auth.dto.SignupDto;
 import com.example.libraryreservation.common.controller.LibraryReservationException;
 import com.example.libraryreservation.common.controller.constant.CommunalResponse;
 import com.example.libraryreservation.common.jwt.JwtUtil;
-import com.example.libraryreservation.common.model.TokenModel;
-import com.example.libraryreservation.common.model.UserModel;
+import com.example.libraryreservation.common.model.TokenEntity;
+import com.example.libraryreservation.common.model.UserEntity;
 import com.example.libraryreservation.common.repository.TokenRepository;
 import com.example.libraryreservation.common.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,8 @@ public class AuthService {
     private String secretKey;
 
     @Transactional
-    public TokenModel login(LoginDto loginDto) {
-        Optional<UserModel> userModel = userRepository.findUserModelByPhoneNumber(loginDto.phoneNumber());
+    public TokenEntity login(LoginDto loginDto) {
+        Optional<UserEntity> userModel = userRepository.findUserModelByPhoneNumber(loginDto.phoneNumber());
         if (userModel.isEmpty()) {
             throw new AccessDeniedException("전화번호가 일치하지 않습니다.");
         }
@@ -46,17 +46,17 @@ public class AuthService {
         String accessToken = JwtUtil.generateToken(userModel.get(), secretKey);
         String refreshToken = JwtUtil.createRefreshToken(secretKey);
 
-        Optional<TokenModel> tokenModelOptional = tokenRepository.findTokenModelByUserModel(userModel.get());
-        TokenModel tokenModel = tokenModelOptional.orElseGet(TokenModel::new);
+        Optional<TokenEntity> tokenModelOptional = tokenRepository.findTokenModelByUserModel(userModel.get());
+        TokenEntity tokenEntity = tokenModelOptional.orElseGet(TokenEntity::new);
 
-        tokenModel.setUserModel(userModel.get());
-        tokenModel.setAccessToken(accessToken);
-        tokenModel.setRefreshToken(refreshToken);
+        tokenEntity.setUserEntity(userModel.get());
+        tokenEntity.setAccessToken(accessToken);
+        tokenEntity.setRefreshToken(refreshToken);
 
-        tokenRepository.save(tokenModel);
+        tokenRepository.save(tokenEntity);
 
         log.info("login : success - " + userModel.get().getName());
-        return tokenModel;
+        return tokenEntity;
     }
 
     @Transactional
@@ -71,11 +71,11 @@ public class AuthService {
         String password_encode = encoder.encode(signupDto.password());
         String name = signupDto.name();
 
-        UserModel userModel = new UserModel();
-        userModel.setPhoneNumber(phoneNumber);
-        userModel.setPassword(password_encode);
-        userModel.setName(name);
-        userRepository.save(userModel);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setPhoneNumber(phoneNumber);
+        userEntity.setPassword(password_encode);
+        userEntity.setName(name);
+        userRepository.save(userEntity);
     }
 
     @Transactional
@@ -85,17 +85,17 @@ public class AuthService {
         }
 
         String phoneNumber = refreshDto.phoneNumber();
-        Optional<UserModel> optionalUser = userRepository.findUserModelByPhoneNumber(phoneNumber);
+        Optional<UserEntity> optionalUser = userRepository.findUserModelByPhoneNumber(phoneNumber);
 
         if (optionalUser.isPresent()) {
-            UserModel userModel = optionalUser.get();
-            Optional<TokenModel> tokenModel = tokenRepository.findTokenModelByUserModel(userModel);
+            UserEntity userEntity = optionalUser.get();
+            Optional<TokenEntity> tokenModel = tokenRepository.findTokenModelByUserModel(userEntity);
             if (tokenModel.isEmpty()) {
                 throw new AccessDeniedException("token not found");
             }
 
             if (Objects.equals(tokenModel.get().getRefreshToken(), refreshDto.refreshToken())) {
-                String accessToken = JwtUtil.generateToken(userModel, secretKey);
+                String accessToken = JwtUtil.generateToken(userEntity, secretKey);
                 String refreshToken = JwtUtil.createRefreshToken(secretKey);
                 tokenModel.get().setAccessToken(accessToken);
                 tokenModel.get().setRefreshToken(refreshToken);

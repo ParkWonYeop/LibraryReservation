@@ -2,7 +2,7 @@ package com.example.libraryreservation.admin;
 
 import com.example.libraryreservation.common.controller.LibraryReservationException;
 import com.example.libraryreservation.common.controller.constant.CommunalResponse;
-import com.example.libraryreservation.common.model.ReservationModel;
+import com.example.libraryreservation.common.model.ReservationEntity;
 import com.example.libraryreservation.common.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +20,13 @@ public class AdminService {
 
 
     @Transactional(readOnly = true)
-    public List<ReservationModel> getReservationList() {
+    public List<ReservationEntity> getReservationList() {
         return reservationRepository.findAll();
     }
 
     @Transactional
     public void deleteReservation(long reservationId) {
-        Optional<ReservationModel> reservationModel = reservationRepository.findReservationModelByReservationId(reservationId);
+        Optional<ReservationEntity> reservationModel = reservationRepository.findReservationModelByReservationId(reservationId);
         if (reservationModel.isEmpty()) {
             throw new LibraryReservationException(CommunalResponse.RESERVATION_NOT_FOUND);
         }

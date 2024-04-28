@@ -9,14 +9,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "user_token")
-public class TokenModel {
+public class TokenEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long tokenId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserModel userModel;
+    private UserEntity userEntity;
 
     @Column(name = "access_token")
     private String accessToken;

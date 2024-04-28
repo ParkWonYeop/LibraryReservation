@@ -1,7 +1,7 @@
 package com.example.libraryreservation.admin;
 
 import com.example.libraryreservation.common.dto.ReservationDeleteDto;
-import com.example.libraryreservation.common.model.ReservationModel;
+import com.example.libraryreservation.common.model.ReservationEntity;
 import com.example.libraryreservation.common.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/reservation")
-    public List<ReservationModel> getReservationList() {
+    public List<ReservationEntity> getReservationList() {
         return adminService.getReservationList();
     }
 

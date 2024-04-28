@@ -1,7 +1,7 @@
 package com.example.libraryreservation.reservation;
 
 import com.example.libraryreservation.auth.AuthController;
-import com.example.libraryreservation.common.model.TokenModel;
+import com.example.libraryreservation.common.model.TokenEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
@@ -44,11 +44,11 @@ public class ReservationControllerTest {
     @Before
     public void setUp() {
         session = new MockHttpSession();
-        TokenModel tokenModel = authController.login(loginAddressOne());
-        session.setAttribute("accessToken", tokenModel.getAccessToken());
+        TokenEntity tokenEntity = authController.login(loginAddressOne());
+        session.setAttribute("accessToken", tokenEntity.getAccessToken());
 
-        TokenModel tokenModel2 = authController.login(loginAddressTwo());
-        session.setAttribute("accessToken2", tokenModel2.getAccessToken());
+        TokenEntity tokenEntity2 = authController.login(loginAddressTwo());
+        session.setAttribute("accessToken2", tokenEntity2.getAccessToken());
     }
 
     @After

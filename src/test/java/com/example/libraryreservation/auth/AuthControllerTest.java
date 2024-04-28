@@ -1,6 +1,6 @@
 package com.example.libraryreservation.auth;
 
-import com.example.libraryreservation.common.model.TokenModel;
+import com.example.libraryreservation.common.model.TokenEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
@@ -41,9 +41,9 @@ public class AuthControllerTest {
     public void setUp() {
         session = new MockHttpSession();
 
-        TokenModel tokenModel = authController.login(loginAddressOne());
+        TokenEntity tokenEntity = authController.login(loginAddressOne());
 
-        session.setAttribute("refreshToken", tokenModel.getRefreshToken());
+        session.setAttribute("refreshToken", tokenEntity.getRefreshToken());
     }
 
     @After

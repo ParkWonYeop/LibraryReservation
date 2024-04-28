@@ -10,18 +10,18 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Entity(name = "reservation")
-public class ReservationModel {
+public class ReservationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reservationId;
 
     @ManyToOne
     @JoinColumn(name = "seat_id", nullable = false)
-    private RoomModel seatNumber;
+    private RoomEntity seatNumber;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserModel userModel;
+    private UserEntity userEntity;
 
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;

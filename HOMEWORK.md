@@ -140,8 +140,8 @@
 3. Enum을 사용하는 property는 Enum안에 선언된값인지 검증하는 커스텀 벨리데이션 작성해볼 것. *
 
 ## 2024-04-22
-1. 이력서 재작성
-2. Model vs Entity 스터디 할 것.
-3. EnumValidation 로직 리팩토링.
-4. macos에서도 빌드/테스트 돌아가게끔 수정.
+1. 이력서 재작성 *
+2. Model vs Entity 스터디 할 것. *
+3. EnumValidation 로직 리팩토링. *
+4. macos에서도 빌드/테스트 돌아가게끔 수정. *
 5. 4번 까지 완료 후, 새 프로젝트를 생성 후 kotlin으로 다시 만들어 볼 것.

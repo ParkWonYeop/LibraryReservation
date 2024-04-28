@@ -14,12 +14,10 @@ public class EnumValidator implements ConstraintValidator<EnumValid, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         Object[] enumValues = this.annotation.enumClass().getEnumConstants();
-        if (enumValues != null) {
-            for (Object enumValue : enumValues) {
-                if (value.equals(enumValue.toString())
-                        || (this.annotation.ignoreCase() && value.equalsIgnoreCase(enumValue.toString()))) {
-                    return true;
-                }
+        for (Object enumValue : enumValues) {
+            if (value.equals(enumValue.toString())
+                    || (this.annotation.ignoreCase() && value.equalsIgnoreCase(enumValue.toString()))) {
+                return true;
             }
         }
         return false;

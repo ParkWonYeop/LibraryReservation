@@ -1,7 +1,7 @@
 package com.example.libraryreservation.admin;
 
 import com.example.libraryreservation.auth.AuthController;
-import com.example.libraryreservation.common.model.TokenModel;
+import com.example.libraryreservation.common.model.TokenEntity;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,9 +39,9 @@ public class AdminControllerTest {
     public void setUp() {
         session = new MockHttpSession();
 
-        TokenModel tokenModel = authController.login(loginAddressOne());
+        TokenEntity tokenEntity = authController.login(loginAddressOne());
 
-        session.setAttribute("accessToken", tokenModel.getAccessToken());
+        session.setAttribute("accessToken", tokenEntity.getAccessToken());
     }
 
     @After

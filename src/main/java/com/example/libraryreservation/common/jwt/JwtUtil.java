@@ -9,7 +9,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.AllArgsConstructor;
-import com.example.libraryreservation.common.model.UserModel;
+import com.example.libraryreservation.common.model.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
@@ -20,8 +20,8 @@ public class JwtUtil {
     private static final Long accessExpiredMs = (long) (1000 * 60 * 30);
     private static final Long refreshExpiredMs = (long) (1000 * 60 * 60 * 3);
 
-    public static String generateToken(UserModel userModel, String secretKey) {
-        return createAccessToken(userModel.getPhoneNumber(), secretKey);
+    public static String generateToken(UserEntity userEntity, String secretKey) {
+        return createAccessToken(userEntity.getPhoneNumber(), secretKey);
     }
 
     private static String createAccessToken(String phoneNumber, String secretKey) {

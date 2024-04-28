@@ -1,7 +1,7 @@
 package com.example.libraryreservation.room;
 
 import com.example.libraryreservation.common.enums.RoomEnum;
-import com.example.libraryreservation.common.model.RoomModel;
+import com.example.libraryreservation.common.model.RoomEntity;
 import com.example.libraryreservation.common.validation.ValidationSequence;
 import com.example.libraryreservation.room.dto.RoomTypeDto;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +22,12 @@ public class RoomController {
     private final RoomService roomService;
 
     @GetMapping("/list")
-    public List<RoomModel> getRoomList() {
+    public List<RoomEntity> getRoomList() {
         return roomService.getRoomList();
     }
 
     @GetMapping()
-    public List<RoomModel> getRoom(@Validated(ValidationSequence.class) RoomTypeDto roomTypeDto) {
+    public List<RoomEntity> getRoom(@Validated(ValidationSequence.class) RoomTypeDto roomTypeDto) {
         return roomService.getRoom(RoomEnum.valueOf(roomTypeDto.roomType()));
     }
 }

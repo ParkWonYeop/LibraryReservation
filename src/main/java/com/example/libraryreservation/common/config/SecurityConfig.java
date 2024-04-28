@@ -41,7 +41,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> {
                     requests.requestMatchers("/auth/login", "/auth/signup", "/auth/test").permitAll();
                     requests.requestMatchers(HttpMethod.PUT, "/auth/token").permitAll();
-                    /*requests.requestMatchers("/h2-console/*").permitAll();*/
                     requests.requestMatchers(HttpMethod.GET, "/auth/token").authenticated();
                     requests.requestMatchers("/room/**", "/reservation/**").authenticated();
                     requests.requestMatchers("/admin/**").hasAnyRole(PermissionEnum.ADMIN.toString());

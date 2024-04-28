@@ -1,6 +1,6 @@
 package com.example.libraryreservation.common.task;
 
-import com.example.libraryreservation.common.model.ReservationModel;
+import com.example.libraryreservation.common.model.ReservationEntity;
 import com.example.libraryreservation.common.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +18,13 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 1 9-22 * * ?")
     public void deleteReservation() {
-        List<ReservationModel> reservationModelList = reservationRepository.findAll();
+        List<ReservationEntity> reservationEntityList = reservationRepository.findAll();
 
         LocalDateTime now = LocalDateTime.now();
 
-        for (ReservationModel reservationModel : reservationModelList) {
-            if (now.isAfter(reservationModel.getEndTime())) {
-                reservationRepository.delete(reservationModel);
+        for (ReservationEntity reservationEntity : reservationEntityList) {
+            if (now.isAfter(reservationEntity.getEndTime())) {
+                reservationRepository.delete(reservationEntity);
             }
         }
 

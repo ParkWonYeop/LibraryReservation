@@ -1,7 +1,7 @@
 package com.example.libraryreservation.common.jwt;
 
-import com.example.libraryreservation.common.model.TokenModel;
-import com.example.libraryreservation.common.model.UserModel;
+import com.example.libraryreservation.common.model.TokenEntity;
+import com.example.libraryreservation.common.model.UserEntity;
 import com.example.libraryreservation.common.repository.TokenRepository;
 import com.example.libraryreservation.common.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -60,7 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Optional<UserModel> userModel = userRepository.findUserModelByPhoneNumber(phoneNumber);
+            Optional<UserEntity> userModel = userRepository.findUserModelByPhoneNumber(phoneNumber);
 
             if (userModel.isEmpty()) {
                 log.error("유저를 찾을 수 없습니다.");
@@ -68,7 +68,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Optional<TokenModel> tokenModel = tokenRepository.findTokenModelByUserModel(userModel.get());
+            Optional<TokenEntity> tokenModel = tokenRepository.findTokenModelByUserModel(userModel.get());
 
             if (tokenModel.isPresent() && !Objects.equals(tokenModel.get().getAccessToken(), token)) {
                 log.error("토큰이 유효하지 않습니다.");

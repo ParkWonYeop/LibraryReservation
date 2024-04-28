@@ -4,7 +4,7 @@ import com.example.libraryreservation.auth.dto.LoginDto;
 import com.example.libraryreservation.auth.dto.RefreshDto;
 import com.example.libraryreservation.auth.dto.RefreshResponseDto;
 import com.example.libraryreservation.auth.dto.SignupDto;
-import com.example.libraryreservation.common.model.TokenModel;
+import com.example.libraryreservation.common.model.TokenEntity;
 import com.example.libraryreservation.common.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public TokenModel login(@Validated(ValidationSequence.class) @RequestBody LoginDto loginDto) {
+    public TokenEntity login(@Validated(ValidationSequence.class) @RequestBody LoginDto loginDto) {
         return authService.login(loginDto);
     }
 
